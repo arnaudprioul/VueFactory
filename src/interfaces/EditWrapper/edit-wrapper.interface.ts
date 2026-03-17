@@ -1,6 +1,7 @@
-import type { ICommonsComponentProps } from 'origam/interfaces'
-
-export interface IEditWrapperProps extends ICommonsComponentProps {
+export interface IEditWrapperProps {
+    id?: string
+    class?: string | string[] | Record<string, boolean>
+    style?: string | string[] | Record<string, string>
     slotName?: string
     autoDetectProps?: boolean
 }

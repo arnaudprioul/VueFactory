@@ -1,5 +1,0 @@
-# Origameditorwrapper
-
-## Usage
-
-    <OrigamEditorWrapper />

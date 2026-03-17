@@ -1,1 +1,1 @@
-export { default as OrigamCssBox } from './OrigamCssBox.vue'
+export { default as VfCssBox } from './VfCssBox.vue'

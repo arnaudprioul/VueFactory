@@ -1,22 +1,25 @@
-import { computed, inject, provide, ref } from 'vue'
-
-import { useVModel } from 'origam/composables'
-import { getCurrentInstanceName, getUid } from 'origam/utils'
+import { computed, getCurrentInstance, inject, provide, ref } from 'vue'
 
 import type { TEditorProvide } from '../../types'
+import { EMPTY_EDITOR, VF_PB_EDITOR_KEY } from '../../consts'
 
-import { EMPTY_EDITOR, ORIGAM_PB_EDITOR_KEY } from '../../consts'
+let _uid = 0
 
-export function createEditor (props: any, name = getCurrentInstanceName()) {
+function getUid (): number {
+    return ++_uid
+}
+
+export function createEditor (props: any, name?: string) {
+    const instanceName = name ?? getCurrentInstance()?.type?.__name ?? getCurrentInstance()?.type?.name ?? 'editor'
 
     const children = ref(new Map<unknown, Array<unknown>>())
     const parents = ref(new Map<unknown, unknown>())
 
-    const edit = useVModel(props, 'edit', props.edit, v => new Set(v), v => [...v.values()])
-    const lock = useVModel(props, 'lock', props.lock, v => new Set(v), v => [...v.values()])
+    const edit = ref<Set<unknown>>(new Set(props.edit ?? []))
+    const lock = ref<Set<unknown>>(new Set(props.lock ?? []))
 
     const editor: TEditorProvide = {
-        id: ref(name),
+        id: ref(instanceName),
         root: {
             edit,
             lock,
@@ -25,13 +28,13 @@ export function createEditor (props: any, name = getCurrentInstanceName()) {
         }
     }
 
-    provide(ORIGAM_PB_EDITOR_KEY, editor)
+    provide(VF_PB_EDITOR_KEY, editor)
 
     return editor.root
 }
 
 export function useEditor (props: any) {
-    const parent = inject(ORIGAM_PB_EDITOR_KEY, EMPTY_EDITOR)
+    const parent = inject(VF_PB_EDITOR_KEY, EMPTY_EDITOR)
 
     const uidSymbol = Symbol(getUid())
     const computedId = computed(() => uidSymbol)

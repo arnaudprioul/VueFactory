@@ -1,5 +1,0 @@
-# Origameditorcssbox
-
-## Usage
-
-    <OrigamEditorCssBox />

@@ -1,112 +1,96 @@
 <template>
-	<div class="origam-css-box">
-		<div class="origam-css-box__wrapper">
-			<div class="origam-css-box__header">
-				<origam-title
-						class="origam-css-box__title"
-						tag="h3"
-				>CSS box
-				</origam-title>
+	<div class="vf-css-box">
+		<div class="vf-css-box__wrapper">
+			<div class="vf-css-box__header">
+				<h3 class="vf-css-box__title">CSS box</h3>
 			</div>
 
-			<div class="origam-css-box__content">
-				<div class="origam-css-box__box origam-css-box__box--margin">
-					<origam-label
-							class="origam-css-box__label"
-							color="#2c2c2c"
-							text="Margin"
-					/>
+			<div class="vf-css-box__content">
+				<div class="vf-css-box__box vf-css-box__box--margin">
+					<span class="vf-css-box__label">Margin</span>
 
 					<input
 							v-model="margin.top"
-							class="origam-css-box__input origam-css-box__input--block origam-css-box__input--top"
+							class="vf-css-box__input vf-css-box__input--block vf-css-box__input--top"
 							placeholder="-"
 							type="number"
 					/>
 					<input
 							v-model="margin.right"
-							class="origam-css-box__input origam-css-box__input--inline origam-css-box__input--right"
+							class="vf-css-box__input vf-css-box__input--inline vf-css-box__input--right"
 							placeholder="-"
 							type="number"
 					/>
 					<input
 							v-model="margin.bottom"
-							class="origam-css-box__input origam-css-box__input--block origam-css-box__input--bottom"
+							class="vf-css-box__input vf-css-box__input--block vf-css-box__input--bottom"
 							placeholder="-"
 							type="number"
 					/>
 					<input
 							v-model="margin.left"
-							class="origam-css-box__input origam-css-box__input--inline origam-css-box__input--left"
+							class="vf-css-box__input vf-css-box__input--inline vf-css-box__input--left"
 							placeholder="-"
 							type="number"
 					/>
 
-					<div class="origam-css-box__box origam-css-box__box--border">
-						<origam-label
-								class="origam-css-box__label"
-								color="#2c2c2c"
-								text="Border"
-						/>
+					<div class="vf-css-box__box vf-css-box__box--border">
+						<span class="vf-css-box__label">Border</span>
 
 						<input
 								v-model="border.top"
-								class="origam-css-box__input origam-css-box__input--block origam-css-box__input--top"
+								class="vf-css-box__input vf-css-box__input--block vf-css-box__input--top"
 								placeholder="-"
 								type="number"
 						/>
 						<input
 								v-model="border.right"
-								class="origam-css-box__input origam-css-box__input--inline origam-css-box__input--right"
+								class="vf-css-box__input vf-css-box__input--inline vf-css-box__input--right"
 								placeholder="-"
 								type="number"
 						/>
 						<input
 								v-model="border.bottom"
-								class="origam-css-box__input origam-css-box__input--block origam-css-box__input--bottom"
+								class="vf-css-box__input vf-css-box__input--block vf-css-box__input--bottom"
 								placeholder="-"
 								type="number"
 						/>
 						<input
 								v-model="border.left"
-								class="origam-css-box__input origam-css-box__input--inline origam-css-box__input--left"
+								class="vf-css-box__input vf-css-box__input--inline vf-css-box__input--left"
 								placeholder="-"
 								type="number"
 						/>
 
-						<div class="origam-css-box__box origam-css-box__box--padding">
-							<origam-label
-									class="origam-css-box__label"
-									color="#2c2c2c"
-									text="Padding"
-							/>
+						<div class="vf-css-box__box vf-css-box__box--padding">
+							<span class="vf-css-box__label">Padding</span>
 
 							<input
 									v-model="padding.top"
-									class="origam-css-box__input origam-css-box__input--block origam-css-box__input--top"
+									class="vf-css-box__input vf-css-box__input--block vf-css-box__input--top"
 									placeholder="-"
 									type="number"
 							/>
 							<input
 									v-model="padding.right"
-									class="origam-css-box__input origam-css-box__input--inline origam-css-box__input--right"
+									class="vf-css-box__input vf-css-box__input--inline vf-css-box__input--right"
 									placeholder="-"
 									type="number"
 							/>
 							<input
 									v-model="padding.bottom"
-									class="origam-css-box__input origam-css-box__input--block origam-css-box__input--bottom"
+									class="vf-css-box__input vf-css-box__input--block vf-css-box__input--bottom"
 									placeholder="-"
 									type="number"
 							/>
 							<input
 									v-model="padding.left"
-									class="origam-css-box__input origam-css-box__input--inline origam-css-box__input--left"
+									class="vf-css-box__input vf-css-box__input--inline vf-css-box__input--left"
 									placeholder="-"
 									type="number"
 							/>
 
-							<div class="origam-css-box__text"/>
+							<div class="vf-css-box__text"/>
 						</div>
 					</div>
 				</div>
@@ -119,56 +103,45 @@
 		lang="ts"
 		setup
 >
-	import { OrigamLabel, OrigamTitle } from 'origam/components'
-	import { useProps } from "origam/composables"
+	import { shallowRef, watch } from 'vue'
 
 	import type { ICssBoxProps } from '../../interfaces'
-
-	import { shallowRef, watch } from 'vue'
 
 	// TODO - WIP
 
 	const props = withDefaults(defineProps<ICssBoxProps>(), {})
 
-	defineEmits(['update:padding', 'update:margin', 'update:border'])
+	const emit = defineEmits<{
+		'update:padding': [value: typeof padding.value]
+		'update:margin': [value: typeof margin.value]
+		'update:border': [value: typeof border.value]
+	}>()
 
-	const {filterProps} = useProps<ICssBoxProps>(props)
-
-	const margin = shallowRef({
-		top: '',
-		right: '',
-		bottom: '',
-		left: ''
-	})
-	const border = shallowRef({
-		top: '',
-		right: '',
-		bottom: '',
-		left: ''
-	})
-	const padding = shallowRef({
-		top: '',
-		right: '',
-		bottom: '',
-		left: ''
-	})
+	const margin = shallowRef({top: '', right: '', bottom: '', left: ''})
+	const border = shallowRef({top: '', right: '', bottom: '', left: ''})
+	const padding = shallowRef({top: '', right: '', bottom: '', left: ''})
 
 	watch(() => props, () => {
-
+		// TODO: sync from props to internal state
 	})
 
-	// EXPOSE
+	watch(margin, (val) => emit('update:margin', val))
+	watch(border, (val) => emit('update:border', val))
+	watch(padding, (val) => emit('update:padding', val))
 
-	defineExpose({
-		filterProps
-	})
 </script>
 
 <style
 		lang="scss"
 		scoped
 >
-	.origam-css-box {
+	.vf-css-box {
+		&__title {
+			font-size: 12px;
+			font-weight: 600;
+			margin: 0 0 8px;
+		}
+
 		&__box {
 			padding: 44px;
 			position: relative;
@@ -229,7 +202,6 @@
 
 			&--top {
 				top: 6px;
-
 			}
 
 			&--right {
@@ -253,11 +225,5 @@
 			height: 50px;
 			background-color: #8c8c8c;
 		}
-	}
-</style>
-
-<style>
-	:root {
-
 	}
 </style>

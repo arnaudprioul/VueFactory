@@ -1,1 +1,1 @@
-export { default as OrigamPageBuilder } from './OrigamPageBuilder.vue'
+export { default as VfPageBuilder } from './VfPageBuilder.vue'

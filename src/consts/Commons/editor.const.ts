@@ -3,7 +3,7 @@ import { ref, shallowRef } from 'vue'
 
 import type { TEditorProvide } from '../../types'
 
-export const ORIGAM_PB_EDITOR_KEY: InjectionKey<TEditorProvide> = Symbol.for('origam:editor')
+export const VF_PB_EDITOR_KEY: InjectionKey<TEditorProvide> = Symbol.for('vue-factory:editor')
 
 export const EMPTY_EDITOR: TEditorProvide = {
     id: shallowRef(),

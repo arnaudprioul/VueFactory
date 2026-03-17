@@ -1,6 +1,11 @@
-import { PropType, VNode } from 'vue'
+import type { PropType, VNode } from 'vue'
 
-// TODO - Need create or import pascaleCase function
+function pascalCase (str: string): string {
+    return str
+        .replace(/[-_](.)/g, (_, char: string) => char.toUpperCase())
+        .replace(/^(.)/, (_, char: string) => char.toUpperCase())
+}
+
 export function getNameFromFile (file: string) {
     const parts = /([^/]+)\.vue$/.exec(file)
     if (parts) {
@@ -9,17 +14,18 @@ export function getNameFromFile (file: string) {
     return 'Anonymous'
 }
 
-// TODO -  need to fix probleme with global declaration of vNode to alter it
 export function getTagName (vnode: VNode) {
-    if (typeof vnode.type === 'string') {
-        return vnode.type
-    } else if (vnode.type?.__asyncResolved) {
-        const asyncComp = vnode.type?.__asyncResolved
+    // Cast to any to access Vue internal dev-only properties (__asyncResolved, __file, name)
+    const type = vnode.type as any
+    if (typeof type === 'string') {
+        return type
+    } else if (type?.__asyncResolved) {
+        const asyncComp = type.__asyncResolved
         return asyncComp.name ?? getNameFromFile(asyncComp.__file)
-    } else if (vnode.type?.name) {
-        return vnode.type.name
-    } else if (vnode.type?.__file) {
-        return getNameFromFile(vnode.type.__file)
+    } else if (type?.name) {
+        return type.name
+    } else if (type?.__file) {
+        return getNameFromFile(type.__file)
     }
     return 'Anonymous'
 }

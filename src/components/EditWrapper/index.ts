@@ -1,1 +1,1 @@
-export { default as OrigamEditWrapper } from './OrigamEditWrapper.vue'
+export { default as VfEditWrapper } from './VfEditWrapper.vue'

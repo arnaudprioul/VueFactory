@@ -3,7 +3,7 @@
 			:class="editWrapperClasses"
 			:style="editWrapperStyles"
 	>
-		<div class="origam-edit-wrapper__wrapper">
+		<div class="vf-edit-wrapper__wrapper">
 			<slot name="default"/>
 		</div>
 	</div>
@@ -13,8 +13,8 @@
 		lang="ts"
 		setup
 >
-	import { computed, ref, StyleValue, useSlots, watch } from 'vue'
-	import { useProps } from 'origam/composables'
+	import { computed, ref, useSlots, watch } from 'vue'
+	import type { StyleValue } from 'vue'
 
 	import type { IAutoPropComponentDefinition, IEditWrapperProps } from '../../interfaces'
 	import { scanForAutoProps } from '../../utils'
@@ -23,16 +23,13 @@
 
 	const props = withDefaults(defineProps<IEditWrapperProps>(), {slotName: 'default', autoDetectProps: true})
 
-	const {filterProps} = useProps<IEditWrapperProps>(props)
-
-	const slots = useSlots()
+	const slots = useSlots() as Record<string, (() => any) | undefined>
 
 	const vnodes = ref<Array<any>>([])
 
 	watch(() => props, () => {
 		if (typeof slots[props.slotName] !== "undefined") {
-			// @ts-expect-error TODO
-			vnodes.value = slots[props.slotName]()
+			vnodes.value = slots[props.slotName]!()
 		}
 
 		if (slots[props.slotName] && props.autoDetectProps && vnodes) {
@@ -47,21 +44,11 @@
 	// CLASS & STYLES
 
 	const editWrapperStyles = computed(() => {
-		return [
-			props.style
-		] as StyleValue
+		return [props.style] as StyleValue
 	})
+
 	const editWrapperClasses = computed(() => {
-		return [
-			'origam-edit-wrapper',
-			props.class
-		]
-	})
-
-	// EXPOSE
-
-	defineExpose({
-		filterProps
+		return ['vf-edit-wrapper', props.class]
 	})
 
 </script>
@@ -71,10 +58,4 @@
 		scoped
 >
 
-</style>
-
-<style>
-	:root {
-
-	}
 </style>
