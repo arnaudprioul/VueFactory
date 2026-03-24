@@ -1,0 +1,229 @@
+// ─── Block & Section styles (HTML adapter fallback) ───────────────────────────
+@use 'variables' as *;
+
+// ─── Block: Heading ───────────────────────────────────────────────────────────
+
+.vf-block--vf-heading {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: $font-weight-extrabold;
+  line-height: $line-height-tight;
+  letter-spacing: $letter-spacing-tight;
+  color: $color-text-default;
+  margin: 0 0 $spacing-4;
+}
+
+// ─── Block: Text ──────────────────────────────────────────────────────────────
+
+.vf-block--vf-text {
+  font-size: $font-size-base;
+  line-height: $line-height-loose;
+  color: $color-text-subtle;
+  margin: 0 0 $spacing-4;
+}
+
+// ─── Block: Subheading (legacy alias) ─────────────────────────────────────────
+
+.vf-block--subheading {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: $font-weight-regular;
+  line-height: $line-height-relaxed;
+  color: $color-text-muted;
+  margin: 0 0 $spacing-8;
+  max-width: 52ch;
+}
+
+// ─── Block: Button ────────────────────────────────────────────────────────────
+
+.vf-block--button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-2;
+  padding: 11px $spacing-6;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background $transition-base, border-color $transition-base, transform $transition-fast, box-shadow $transition-base;
+  border: 2px solid transparent;
+  text-decoration: none;
+  white-space: nowrap;
+  outline: none;
+  position: relative;
+
+  background: $color-primary-500;
+  color: #fff;
+  border-color: $color-primary-500;
+  box-shadow: $shadow-primary;
+
+  &:hover {
+    background: $color-primary-600;
+    border-color: $color-primary-600;
+    transform: translateY(-1px);
+    box-shadow: $shadow-primary-hover;
+  }
+
+  &:active { transform: translateY(0); }
+
+  &[variant="secondary"] {
+    background: $color-surface-raised;
+    color: $color-neutral-800;
+    border-color: $color-border;
+    box-shadow: $shadow-sm;
+
+    &:hover {
+      background: $color-neutral-100;
+      border-color: $color-neutral-300;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  &[variant="ghost"] {
+    background: transparent;
+    color: $color-primary-500;
+    border-color: $color-primary-200;
+    box-shadow: none;
+
+    &:hover {
+      background: $color-primary-50;
+      border-color: $color-primary-400;
+    }
+  }
+}
+
+// ─── Block: Row / Column / Grid ───────────────────────────────────────────────
+
+.vf-block--row {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  flex-wrap: wrap;
+}
+
+.vf-block--grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-12;
+  align-items: center;
+}
+
+.vf-block--column {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-4;
+}
+
+// ─── Block: Badge / Tag ───────────────────────────────────────────────────────
+
+.vf-block--badge,
+.vf-block--tag {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-1 14px;
+  background: $color-primary-50;
+  color: $color-primary-500;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  letter-spacing: $letter-spacing-wide;
+  text-transform: uppercase;
+}
+
+// ─── Block: Image ─────────────────────────────────────────────────────────────
+
+.vf-block--image {
+  border-radius: $radius-xl;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  box-shadow: $shadow-lg;
+}
+
+// ─── Block: Divider ───────────────────────────────────────────────────────────
+
+.vf-block--divider {
+  border: none;
+  border-top: 1px solid $color-border;
+  margin: $spacing-8 0;
+  width: 100%;
+}
+
+// ─── Block: Icon ──────────────────────────────────────────────────────────────
+
+.vf-block--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: $color-primary-50;
+  color: $color-primary-500;
+  border-radius: $radius-lg;
+}
+
+// ─── Block: Card ──────────────────────────────────────────────────────────────
+
+.vf-block--card {
+  background: $color-surface;
+  border: 1px solid $color-border-subtle;
+  border-radius: $radius-xl;
+  padding: $spacing-8;
+  box-shadow: $shadow-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-3;
+}
+
+// ─── Section container ────────────────────────────────────────────────────────
+
+.vf-section {
+  width: 100%;
+  padding: $section-padding-y $section-padding-x;
+}
+
+.vf-section--hero {
+  padding-top: $section-padding-hero-y;
+  padding-bottom: $section-padding-hero-y;
+
+  &.vf-section--centered {
+    text-align: center;
+    max-width: 760px;
+
+    .vf-block--subheading {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .vf-block--row {
+      justify-content: center;
+    }
+  }
+
+  &.vf-section--minimal {
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+
+    .vf-block--vf-heading {
+      font-size: clamp(3rem, 4vw, 5.5rem);
+    }
+  }
+}
+
+// ─── Section wrapper ──────────────────────────────────────────────────────────
+
+.vf-sr__wrapper {
+  background: $color-surface;
+  overflow: hidden;
+}
+
+// ─── Block selection (editor) ─────────────────────────────────────────────────
+
+.vf-block--selected {
+  outline: 2px dashed rgba(99, 102, 241, 0.6) !important;
+  outline-offset: 2px;
+}

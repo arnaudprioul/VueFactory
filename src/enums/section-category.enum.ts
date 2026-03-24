@@ -1,0 +1,15 @@
+export enum ESectionCategory {
+  Hero         = 'hero',
+  Features     = 'features',
+  Pricing      = 'pricing',
+  Testimonials = 'testimonials',
+  Cta          = 'cta',
+  Content      = 'content',
+  Gallery      = 'gallery',
+  Stats        = 'stats',
+  Team         = 'team',
+  Faq          = 'faq',
+  Contact      = 'contact',
+  Header       = 'header',
+  Footer       = 'footer',
+}

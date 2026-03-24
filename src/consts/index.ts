@@ -1,1 +1,5 @@
-export * from './Commons/editor.const'
+export * from './editor.const'
+export * from './generic-component-labels.const'
+export * from './section-category-labels.const'
+export * from './section-category-icons.const'
+export * from './tag-prop.const'

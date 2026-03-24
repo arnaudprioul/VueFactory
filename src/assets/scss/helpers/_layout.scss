@@ -1,0 +1,39 @@
+// ─── Layout helpers ───────────────────────────────────────────────────────────
+@use '../variables' as *;
+
+// Flex
+.vf-flex         { display: flex; }
+.vf-flex-col     { display: flex; flex-direction: column; }
+.vf-flex-center  { display: flex; align-items: center; justify-content: center; }
+.vf-flex-between { display: flex; align-items: center; justify-content: space-between; }
+.vf-flex-wrap    { flex-wrap: wrap; }
+.vf-flex-1       { flex: 1; }
+
+// Grid
+.vf-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: $spacing-8; }
+.vf-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: $spacing-8; }
+.vf-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: $spacing-6; }
+
+// Gap
+.vf-gap-1  { gap: $spacing-1; }
+.vf-gap-2  { gap: $spacing-2; }
+.vf-gap-3  { gap: $spacing-3; }
+.vf-gap-4  { gap: $spacing-4; }
+.vf-gap-6  { gap: $spacing-6; }
+.vf-gap-8  { gap: $spacing-8; }
+.vf-gap-12 { gap: $spacing-12; }
+
+// Width
+.vf-w-full  { width: 100%; }
+.vf-w-auto  { width: auto; }
+.vf-max-content { max-width: 52ch; }
+
+// Container
+.vf-container {
+  width: 100%;
+  max-width: $bp-xl;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: $spacing-6;
+  padding-right: $spacing-6;
+}

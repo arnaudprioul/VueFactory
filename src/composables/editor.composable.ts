@@ -1,13 +1,11 @@
 import { computed, getCurrentInstance, inject, provide, ref } from 'vue'
 
-import type { TEditorProvide } from '../../types'
-import { EMPTY_EDITOR, VF_PB_EDITOR_KEY } from '../../consts'
+import type { TEditorProvide } from '../types'
+import { EMPTY_EDITOR, VF_PB_EDITOR_KEY } from '../consts'
 
 let _uid = 0
 
-function getUid (): number {
-    return ++_uid
-}
+const getUid = (): number => ++_uid
 
 export function createEditor (props: any, name?: string) {
     const instanceName = name ?? getCurrentInstance()?.type?.__name ?? getCurrentInstance()?.type?.name ?? 'editor'

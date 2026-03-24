@@ -103,31 +103,69 @@
 		lang="ts"
 		setup
 >
-	import { shallowRef, watch } from 'vue'
+	import { ref, watch } from 'vue'
 
 	import type { ICssBoxProps } from '../../interfaces'
 
-	// TODO - WIP
+	type Sides = { top: string; right: string; bottom: string; left: string }
 
 	const props = withDefaults(defineProps<ICssBoxProps>(), {})
 
+	const margin = ref<Sides>({ top: '', right: '', bottom: '', left: '' })
+	const border = ref<Sides>({ top: '', right: '', bottom: '', left: '' })
+	const padding = ref<Sides>({ top: '', right: '', bottom: '', left: '' })
+
 	const emit = defineEmits<{
-		'update:padding': [value: typeof padding.value]
-		'update:margin': [value: typeof margin.value]
-		'update:border': [value: typeof border.value]
+		'update:padding': [value: Sides]
+		'update:margin': [value: Sides]
+		'update:border': [value: Sides]
 	}>()
 
-	const margin = shallowRef({top: '', right: '', bottom: '', left: ''})
-	const border = shallowRef({top: '', right: '', bottom: '', left: ''})
-	const padding = shallowRef({top: '', right: '', bottom: '', left: ''})
+	function parseVal(val: number | string | undefined): string {
+		if (val === undefined || val === '') return ''
+		return String(typeof val === 'number' ? val : String(val).replace(/px$/, ''))
+	}
+
+	function parseSides(val: number | string | undefined): Sides {
+		if (val === undefined) return { top: '', right: '', bottom: '', left: '' }
+		if (typeof val === 'number') {
+			const s = String(val)
+			return { top: s, right: s, bottom: s, left: s }
+		}
+		const parts = String(val).trim().split(/\s+/).map(p => p.replace(/px$/, ''))
+		if (parts.length === 1) return { top: parts[0], right: parts[0], bottom: parts[0], left: parts[0] }
+		if (parts.length === 2) return { top: parts[0], right: parts[1], bottom: parts[0], left: parts[1] }
+		if (parts.length === 3) return { top: parts[0], right: parts[1], bottom: parts[2], left: parts[1] }
+		return { top: parts[0], right: parts[1], bottom: parts[2], left: parts[3] }
+	}
 
 	watch(() => props, () => {
-		// TODO: sync from props to internal state
-	})
+		const padBase = parseSides(props.padding)
+		padding.value = {
+			top:    parseVal(props.paddingTop)    || padBase.top,
+			right:  parseVal(props.paddingRight)  || padBase.right,
+			bottom: parseVal(props.paddingBottom) || padBase.bottom,
+			left:   parseVal(props.paddingLeft)   || padBase.left,
+		}
+		const marBase = parseSides(props.margin)
+		margin.value = {
+			top:    parseVal(props.marginTop)    || marBase.top,
+			right:  parseVal(props.marginRight)  || marBase.right,
+			bottom: parseVal(props.marginBottom) || marBase.bottom,
+			left:   parseVal(props.marginLeft)   || marBase.left,
+		}
+		const borBase = parseSides(props.border)
+		border.value = {
+			top:    parseVal(props.borderTop)    || borBase.top,
+			right:  parseVal(props.borderRight)  || borBase.right,
+			bottom: parseVal(props.borderBottom) || borBase.bottom,
+			left:   parseVal(props.borderLeft)   || borBase.left,
+		}
+	}, { immediate: true, deep: true })
 
-	watch(margin, (val) => emit('update:margin', val))
-	watch(border, (val) => emit('update:border', val))
-	watch(padding, (val) => emit('update:padding', val))
+	watch(margin,  (val) => emit('update:margin', val),  { deep: true })
+	watch(border,  (val) => emit('update:border', val),  { deep: true })
+	watch(padding, (val) => emit('update:padding', val), { deep: true })
 
 </script>
 

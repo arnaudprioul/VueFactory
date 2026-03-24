@@ -1,0 +1,19 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  VueFactory — Main stylesheet
+//  Seul ce fichier est compilé en CSS. Tous les autres sont des partials (_*).
+// ════════════════════════════════════════════════════════════════════════════
+
+// ─── 1. Variables (tokens de design) ─────────────────────────────────────────
+@use 'variables/colors';
+@use 'variables/typography';
+@use 'variables/spacing';
+@use 'variables/effects';
+@use 'variables/breakpoints';
+
+// ─── 2. Helpers (classes utilitaires) ────────────────────────────────────────
+@use 'helpers/reset';
+@use 'helpers/layout';
+@use 'helpers/text';
+
+// ─── 3. Composants & sections ────────────────────────────────────────────────
+@use 'sections';

@@ -1,0 +1,34 @@
+// ─── Text helpers ─────────────────────────────────────────────────────────────
+@use '../variables' as *;
+
+// Alignment
+.vf-text-left   { text-align: left; }
+.vf-text-center { text-align: center; }
+.vf-text-right  { text-align: right; }
+
+// Color
+.vf-text-default { color: $color-text-default; }
+.vf-text-muted   { color: $color-text-muted; }
+.vf-text-subtle  { color: $color-text-subtle; }
+.vf-text-primary { color: $color-primary-500; }
+
+// Size
+.vf-text-xs   { font-size: $font-size-xs; }
+.vf-text-sm   { font-size: $font-size-sm; }
+.vf-text-base { font-size: $font-size-base; }
+.vf-text-lg   { font-size: $font-size-lg; }
+.vf-text-xl   { font-size: $font-size-xl; }
+.vf-text-2xl  { font-size: $font-size-2xl; }
+
+// Weight
+.vf-font-regular   { font-weight: $font-weight-regular; }
+.vf-font-medium    { font-weight: $font-weight-medium; }
+.vf-font-semibold  { font-weight: $font-weight-semibold; }
+.vf-font-bold      { font-weight: $font-weight-bold; }
+
+// Truncate
+.vf-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

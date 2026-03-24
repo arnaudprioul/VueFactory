@@ -1,0 +1,31 @@
+// ─── Colors ───────────────────────────────────────────────────────────────────
+
+// Primary (indigo)
+$color-primary-50:  #eef2ff !default;
+$color-primary-100: #e0e7ff !default;
+$color-primary-200: #c7d2fe !default;
+$color-primary-400: #818cf8 !default;
+$color-primary-500: #6366f1 !default;
+$color-primary-600: #4f46e5 !default;
+$color-primary-700: #4338ca !default;
+
+// Neutral (slate)
+$color-neutral-50:  #f8fafc !default;
+$color-neutral-100: #f1f5f9 !default;
+$color-neutral-200: #e2e8f0 !default;
+$color-neutral-300: #cbd5e1 !default;
+$color-neutral-400: #94a3b8 !default;
+$color-neutral-500: #64748b !default;
+$color-neutral-600: #475569 !default;
+$color-neutral-700: #334155 !default;
+$color-neutral-800: #1e293b !default;
+$color-neutral-900: #0f172a !default;
+
+// Semantic aliases
+$color-text-default:   $color-neutral-900 !default;
+$color-text-muted:     $color-neutral-600 !default;
+$color-text-subtle:    $color-neutral-500 !default;
+$color-border:         $color-neutral-200 !default;
+$color-border-subtle:  $color-neutral-100 !default;
+$color-surface:        #ffffff !default;
+$color-surface-raised: $color-neutral-50 !default;

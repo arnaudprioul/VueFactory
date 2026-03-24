@@ -1,0 +1,25 @@
+import { EGenericComponentType } from '../enums/generic-component-type.enum'
+
+export const GENERIC_COMPONENT_LABELS: Record<EGenericComponentType, string> = {
+  [EGenericComponentType.Button]:     'Bouton',
+  [EGenericComponentType.Text]:       'Texte / Paragraphe',
+  [EGenericComponentType.Heading]:    'Titre (H1)',
+  [EGenericComponentType.Subheading]: 'Sous-titre (H2/H3)',
+  [EGenericComponentType.Image]:      'Image',
+  [EGenericComponentType.Icon]:       'Icône',
+  [EGenericComponentType.Badge]:      'Badge',
+  [EGenericComponentType.Tag]:        'Tag / Chip',
+  [EGenericComponentType.Card]:       'Carte',
+  [EGenericComponentType.Container]:  'Conteneur',
+  [EGenericComponentType.Grid]:       'Grille',
+  [EGenericComponentType.Row]:        'Ligne',
+  [EGenericComponentType.Column]:     'Colonne',
+  [EGenericComponentType.Divider]:    'Séparateur',
+  [EGenericComponentType.Spacer]:     'Espaceur',
+  [EGenericComponentType.Input]:      'Champ de saisie',
+  [EGenericComponentType.List]:       'Liste',
+  [EGenericComponentType.ListItem]:   'Élément de liste',
+  [EGenericComponentType.Link]:       'Lien',
+  [EGenericComponentType.Video]:      'Vidéo',
+  [EGenericComponentType.Carousel]:   'Carrousel',
+}

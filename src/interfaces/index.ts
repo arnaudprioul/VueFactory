@@ -1,3 +1,15 @@
-export * from './CssBox/css-box.interface'
+export * from './css-box.interface'
+export * from './edit-wrapper.interface'
 
-export * from './EditWrapper/edit-wrapper.interface'
+// ─── Domain interfaces ────────────────────────────────────────────────────────
+export type { IPropMapper } from './prop-mapper.interface'
+export type { IComponentDefinition } from './component-definition.interface'
+export type { IDesignSystemAdapter } from './design-system-adapter.interface'
+export type { IEditableProp } from './editable-prop.interface'
+export type { IBlockDefinition } from './block-definition.interface'
+export type { ISectionTemplate } from './section-template.interface'
+export type { ISectionInstance } from './section-instance.interface'
+export type { IPageConfig } from './page-config.interface'
+export type { IPageBuilderState } from './page-builder-state.interface'
+export type { IPageBuilderEmits } from './page-builder-emits.interface'
+export type { IDsMapperState } from './ds-mapper-state.interface'

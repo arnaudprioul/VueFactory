@@ -1,0 +1,12 @@
+// ─── Reset ────────────────────────────────────────────────────────────────────
+@use '../variables' as *;
+
+.vf-section-renderer__content {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  font-family: $font-family-base;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

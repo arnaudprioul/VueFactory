@@ -12,7 +12,8 @@
     ".": {
       "import": "./dist/vue-factory-page-builder.js",
       "require": "./dist/vue-factory-page-builder.cjs"
-    }
+    },
+    "./dist/vue-factory-page-builder.css": "./dist/vue-factory-page-builder.css"
   },
   "scripts": {
     "dev": "vite build --watch",

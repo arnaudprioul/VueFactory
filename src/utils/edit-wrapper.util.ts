@@ -1,12 +1,11 @@
 import type { PropType, VNode } from 'vue'
 
-function pascalCase (str: string): string {
-    return str
-        .replace(/[-_](.)/g, (_, char: string) => char.toUpperCase())
-        .replace(/^(.)/, (_, char: string) => char.toUpperCase())
-}
+const pascalCase = (str: string): string =>
+  str
+    .replace(/[-_](.)/g, (_, char: string) => char.toUpperCase())
+    .replace(/^(.)/, (_, char: string) => char.toUpperCase())
 
-export function getNameFromFile (file: string) {
+export const getNameFromFile = (file: string): string => {
     const parts = /([^/]+)\.vue$/.exec(file)
     if (parts) {
         return pascalCase(parts[1])
@@ -14,7 +13,7 @@ export function getNameFromFile (file: string) {
     return 'Anonymous'
 }
 
-export function getTagName (vnode: VNode) {
+export const getTagName = (vnode: VNode): string => {
     // Cast to any to access Vue internal dev-only properties (__asyncResolved, __file, name)
     const type = vnode.type as any
     if (typeof type === 'string') {
@@ -30,7 +29,7 @@ export function getTagName (vnode: VNode) {
     return 'Anonymous'
 }
 
-export function scanForAutoProps (vnodes: Array<any>) {
+export const scanForAutoProps = (vnodes: Array<any>): Array<any> => {
     const result: Array<any> = []
     let index = 0
 
