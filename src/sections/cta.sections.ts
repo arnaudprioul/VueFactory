@@ -22,8 +22,8 @@ export const ctaSections: SectionTemplate[] = [
             style: { display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' },
             meta: { label: 'Boutons', locked: true },
             children: [
-              { id: 'cta-primary', type: 'button', text: 'Créer un compte', props: { variant: 'primary' }, meta: { label: 'Bouton principal', editableProps: [{ key: 'text', label: 'Texte', type: 'text', default: 'Créer un compte' }, { key: 'href', label: 'Lien', type: 'url', default: '#' }] } },
-              { id: 'cta-secondary', type: 'link', text: 'En savoir plus →', props: { href: '#' }, meta: { label: 'Lien secondaire', editableProps: [{ key: 'text', label: 'Texte', type: 'text', default: 'En savoir plus →' }, { key: 'href', label: 'Lien', type: 'url', default: '#' }] } },
+              { id: 'cta-primary', type: 'vf-button', text: 'Créer un compte', props: { variant: 'primary' }, meta: { label: 'Bouton principal', editableProps: [{ key: 'text', label: 'Texte', type: 'text', default: 'Créer un compte' }, { key: 'href', label: 'Lien', type: 'url', default: '#' }] } },
+              { id: 'cta-secondary', type: 'vf-link', text: 'En savoir plus →', props: { href: '#' }, meta: { label: 'Lien secondaire', editableProps: [{ key: 'text', label: 'Texte', type: 'text', default: 'En savoir plus →' }, { key: 'href', label: 'Lien', type: 'url', default: '#' }] } },
             ],
           },
         ],
@@ -65,7 +65,7 @@ export const ctaSections: SectionTemplate[] = [
                 style: { display: 'flex', alignItems: 'center', flexShrink: '0' },
                 meta: { label: 'CTA' },
                 children: [
-                  { id: 'cta', type: 'button', text: 'Essai gratuit', props: { variant: 'primary' }, meta: { label: 'Bouton', editableProps: [{ key: 'text', label: 'Texte', type: 'text', default: 'Essai gratuit' }, { key: 'href', label: 'Lien', type: 'url', default: '#' }] } },
+                  { id: 'cta', type: 'vf-button', text: 'Essai gratuit', props: { variant: 'primary' }, meta: { label: 'Bouton', editableProps: [{ key: 'text', label: 'Texte', type: 'text', default: 'Essai gratuit' }, { key: 'href', label: 'Lien', type: 'url', default: '#' }] } },
                 ],
               },
             ],

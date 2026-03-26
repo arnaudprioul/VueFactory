@@ -11,7 +11,7 @@ export const elementPlusAdapter: DesignSystemAdapter = {
   name: 'Element Plus',
   version: '^2.x',
   componentMap: {
-    button: {
+    'vf-button': {
       component: 'el-button',
       defaultProps: { type: 'primary' },
       propMap: {
@@ -33,7 +33,7 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         size: { name: 'size' },
       },
     },
-    image: {
+    'vf-img': {
       component: 'el-image',
       defaultProps: { fit: 'cover', lazy: true },
       propMap: {
@@ -43,14 +43,14 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         height: { name: 'style', transform: (v) => ({ height: `${v}px` }) },
       },
     },
-    icon: {
+    'vf-icon': {
       component: 'el-icon',
       propMap: {
         size: { name: 'size' },
         color: { name: 'color' },
       },
     },
-    badge: {
+    'vf-chip': {
       component: 'el-badge',
       propMap: {
         value: { name: 'value' },
@@ -58,7 +58,7 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         max: { name: 'max' },
       },
     },
-    tag: {
+    'vf-tag': {
       component: 'el-tag',
       defaultProps: { effect: 'plain' },
       propMap: {
@@ -78,7 +78,7 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         size: { name: 'size' },
       },
     },
-    card: {
+    'vf-card': {
       component: 'el-card',
       defaultProps: { shadow: 'hover' },
       propMap: {
@@ -86,10 +86,10 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         header: { name: 'header' },
       },
     },
-    container: {
+    'vf-container': {
       component: 'el-container',
     },
-    grid: {
+    'vf-grid': {
       component: 'el-row',
       defaultProps: { gutter: 20 },
       propMap: {
@@ -98,10 +98,10 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         align: { name: 'align' },
       },
     },
-    row: {
+    'vf-row': {
       component: 'el-row',
     },
-    column: {
+    'vf-column': {
       component: 'el-col',
       propMap: {
         span: { name: 'span' },
@@ -112,7 +112,7 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         lg: { name: 'lg' },
       },
     },
-    divider: {
+    'vf-divider': {
       component: 'el-divider',
       propMap: {
         direction: { name: 'direction' },
@@ -120,10 +120,10 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         contentPosition: { name: 'content-position' },
       },
     },
-    spacer: {
+    'vf-spacer': {
       component: 'div',
     },
-    input: {
+    'vf-input': {
       component: 'el-input',
       propMap: {
         label: { name: 'placeholder' },
@@ -133,13 +133,13 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         clearable: { name: 'clearable' },
       },
     },
-    list: {
+    'vf-list': {
       component: 'ul',
     },
-    'list-item': {
+    'vf-list-item': {
       component: 'li',
     },
-    link: {
+    'vf-link': {
       component: 'el-link',
       defaultProps: { type: 'primary' },
       propMap: {
@@ -148,11 +148,11 @@ export const elementPlusAdapter: DesignSystemAdapter = {
         underline: { name: 'underline' },
       },
     },
-    video: {
+    'vf-video': {
       component: 'video',
       defaultProps: { controls: true },
     },
-    carousel: {
+    'vf-carousel': {
       component: 'el-carousel',
       defaultProps: { type: 'card' },
       propMap: {

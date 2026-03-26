@@ -12,7 +12,7 @@ export const vuetifyAdapter: DesignSystemAdapter = {
   name: 'Vuetify 3',
   version: '^3.x',
   componentMap: {
-    button: {
+    'vf-button': {
       component: 'v-btn',
       defaultProps: { color: 'primary', variant: 'elevated' },
       propMap: {
@@ -23,7 +23,7 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         href: { name: 'href' },
       },
     },
-    image: {
+    'vf-img': {
       component: 'v-img',
       defaultProps: { cover: true },
       propMap: {
@@ -33,7 +33,7 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         height: { name: 'height' },
       },
     },
-    icon: {
+    'vf-icon': {
       component: 'v-icon',
       propMap: {
         name: { name: 'icon' },
@@ -41,14 +41,14 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         color: { name: 'color' },
       },
     },
-    badge: {
+    'vf-chip': {
       component: 'v-badge',
       propMap: {
         color: { name: 'color' },
         content: { name: 'content' },
       },
     },
-    tag: {
+    'vf-tag': {
       component: 'v-chip',
       defaultProps: { size: 'small' },
       propMap: {
@@ -57,7 +57,7 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         size: { name: 'size' },
       },
     },
-    card: {
+    'vf-card': {
       component: 'v-card',
       defaultProps: { elevation: 2 },
       propMap: {
@@ -66,11 +66,11 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         rounded: { name: 'rounded' },
       },
     },
-    container: {
+    'vf-container': {
       component: 'v-container',
       defaultProps: { fluid: false },
     },
-    grid: {
+    'vf-grid': {
       component: 'v-row',
       propMap: {
         gap: { name: 'no-gutters', transform: (v) => !v },
@@ -78,10 +78,10 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         justify: { name: 'justify' },
       },
     },
-    row: {
+    'vf-row': {
       component: 'v-row',
     },
-    column: {
+    'vf-column': {
       component: 'v-col',
       propMap: {
         span: { name: 'cols' },
@@ -90,17 +90,17 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         lg: { name: 'lg' },
       },
     },
-    divider: {
+    'vf-divider': {
       component: 'v-divider',
       propMap: {
         vertical: { name: 'vertical' },
         thickness: { name: 'thickness' },
       },
     },
-    spacer: {
+    'vf-spacer': {
       component: 'v-spacer',
     },
-    input: {
+    'vf-input': {
       component: 'v-text-field',
       defaultProps: { variant: 'outlined', density: 'comfortable' },
       propMap: {
@@ -111,10 +111,10 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         required: { name: 'required' },
       },
     },
-    list: {
+    'vf-list': {
       component: 'v-list',
     },
-    'list-item': {
+    'vf-list-item': {
       component: 'v-list-item',
       propMap: {
         title: { name: 'title' },
@@ -122,15 +122,15 @@ export const vuetifyAdapter: DesignSystemAdapter = {
         prependIcon: { name: 'prepend-icon' },
       },
     },
-    link: {
+    'vf-link': {
       component: 'a',
       defaultProps: { href: '#' },
     },
-    video: {
+    'vf-video': {
       component: 'video',
       defaultProps: { controls: true },
     },
-    carousel: {
+    'vf-carousel': {
       component: 'v-carousel',
       defaultProps: { 'show-arrows': 'hover' },
     },

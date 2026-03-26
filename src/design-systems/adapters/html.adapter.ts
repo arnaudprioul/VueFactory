@@ -9,64 +9,63 @@ export const htmlAdapter: DesignSystemAdapter = {
   name: 'HTML Natif',
   version: 'HTML5',
   componentMap: {
-    button: {
+    'vf-button': {
       component: 'button',
       defaultProps: { type: 'button' },
     },
-    image: {
+    'vf-img': {
       component: 'img',
       defaultProps: { loading: 'lazy', alt: '' },
     },
-    icon: {
+    'vf-icon': {
       component: 'span',
     },
-    badge: {
+    'vf-chip': {
       component: 'span',
     },
-    tag: {
+    'vf-tag': {
       component: 'span',
     },
-    card: {
-      component: 'div',
-      defaultProps: {},
-    },
-    container: {
+    'vf-card': {
       component: 'div',
     },
-    grid: {
+    'vf-container': {
       component: 'div',
     },
-    row: {
+    'vf-grid': {
       component: 'div',
     },
-    column: {
+    'vf-row': {
       component: 'div',
     },
-    divider: {
+    'vf-column': {
+      component: 'div',
+    },
+    'vf-divider': {
       component: 'hr',
     },
-    spacer: {
+    'vf-spacer': {
       component: 'div',
     },
-    input: {
+    'vf-input': {
       component: 'input',
       defaultProps: { type: 'text' },
     },
-    list: {
+    'vf-list': {
       component: 'ul',
     },
-    'list-item': {
+    'vf-list-item': {
       component: 'li',
     },
-    link: {
+    'vf-link': {
       component: 'a',
       defaultProps: { href: '#' },
     },
-    video: {
+    'vf-video': {
       component: 'video',
       defaultProps: { controls: true },
     },
-    carousel: {
+    'vf-carousel': {
       component: 'div',
     },
   },

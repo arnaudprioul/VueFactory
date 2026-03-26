@@ -36,7 +36,7 @@ export const heroSections: SectionTemplate[] = [
             children: [
               {
                 id: 'cta-primary',
-                type: 'button',
+                type: 'vf-button',
                 text: 'Commencer gratuitement',
                 props: { variant: 'primary' },
                 meta: {
@@ -50,7 +50,7 @@ export const heroSections: SectionTemplate[] = [
               },
               {
                 id: 'cta-secondary',
-                type: 'button',
+                type: 'vf-button',
                 text: 'Voir la démo',
                 props: { variant: 'ghost' },
                 meta: {
@@ -94,7 +94,7 @@ export const heroSections: SectionTemplate[] = [
                 children: [
                   {
                     id: 'badge',
-                    type: 'badge',
+                    type: 'vf-chip',
                     text: 'Nouveauté',
                     meta: { label: 'Badge', editableProps: [{ key: 'text', label: 'Texte du badge', type: 'text', default: 'Nouveauté' }] },
                   },
@@ -114,7 +114,7 @@ export const heroSections: SectionTemplate[] = [
                   },
                   {
                     id: 'cta',
-                    type: 'button',
+                    type: 'vf-button',
                     text: 'Démarrer maintenant',
                     props: { variant: 'primary' },
                     meta: { label: 'CTA', editableProps: [{ key: 'text', label: 'Bouton', type: 'text', default: 'Démarrer maintenant' }, { key: 'href', label: 'Lien', type: 'url', default: '#' }] },
@@ -129,7 +129,7 @@ export const heroSections: SectionTemplate[] = [
                 children: [
                   {
                     id: 'hero-image',
-                    type: 'image',
+                    type: 'vf-img',
                     props: { src: 'https://placehold.co/600x400', alt: 'Illustration hero', width: '100%' },
                     meta: {
                       label: 'Image hero',
@@ -169,7 +169,7 @@ export const heroSections: SectionTemplate[] = [
           },
           {
             id: 'cta',
-            type: 'button',
+            type: 'vf-button',
             text: 'Explorer',
             props: { variant: 'primary' },
             meta: { label: 'Bouton', editableProps: [{ key: 'text', label: 'Bouton', type: 'text', default: 'Explorer' }, { key: 'href', label: 'Lien', type: 'url', default: '#' }] },

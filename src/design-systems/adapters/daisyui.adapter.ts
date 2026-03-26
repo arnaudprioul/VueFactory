@@ -14,7 +14,7 @@ export const daisyuiAdapter: DesignSystemAdapter = {
   name: 'DaisyUI',
   version: '^5.x',
   componentMap: {
-    button: {
+    'vf-button': {
       component: 'button',
       defaultProps: { type: 'button', class: 'btn btn-primary' },
       propMap: {
@@ -23,7 +23,7 @@ export const daisyuiAdapter: DesignSystemAdapter = {
         href: { name: 'href' },
       },
     },
-    image: {
+    'vf-img': {
       component: 'img',
       defaultProps: { loading: 'lazy', alt: '', class: 'rounded-box' },
       propMap: {
@@ -33,7 +33,7 @@ export const daisyuiAdapter: DesignSystemAdapter = {
         height: { name: 'height' },
       },
     },
-    icon: {
+    'vf-icon': {
       component: 'span',
       defaultProps: { class: 'inline-block' },
       propMap: {
@@ -42,48 +42,48 @@ export const daisyuiAdapter: DesignSystemAdapter = {
         color: { name: 'style', transform: (v) => `color: ${v}` },
       },
     },
-    badge: {
+    'vf-chip': {
       component: 'span',
       defaultProps: { class: 'badge badge-primary' },
       propMap: {
         color: { name: 'class', transform: (v) => `badge badge-${v}` },
       },
     },
-    tag: {
+    'vf-tag': {
       component: 'span',
       defaultProps: { class: 'badge badge-ghost badge-sm' },
       propMap: {
         color: { name: 'class', transform: (v) => `badge badge-${v} badge-sm` },
       },
     },
-    card: {
+    'vf-card': {
       component: 'div',
       defaultProps: { class: 'card bg-base-100 shadow-md' },
     },
-    container: {
+    'vf-container': {
       component: 'div',
       defaultProps: { class: 'container mx-auto px-4' },
     },
-    grid: {
+    'vf-grid': {
       component: 'div',
       defaultProps: { class: 'grid gap-4' },
     },
-    row: {
+    'vf-row': {
       component: 'div',
       defaultProps: { class: 'flex flex-wrap gap-4' },
     },
-    column: {
+    'vf-column': {
       component: 'div',
     },
-    divider: {
+    'vf-divider': {
       component: 'div',
       defaultProps: { class: 'divider' },
     },
-    spacer: {
+    'vf-spacer': {
       component: 'div',
       defaultProps: { class: 'flex-1' },
     },
-    input: {
+    'vf-input': {
       component: 'input',
       defaultProps: { type: 'text', class: 'input input-bordered w-full' },
       propMap: {
@@ -94,22 +94,22 @@ export const daisyuiAdapter: DesignSystemAdapter = {
         required: { name: 'required' },
       },
     },
-    list: {
+    'vf-list': {
       component: 'ul',
       defaultProps: { class: 'menu bg-base-200 rounded-box' },
     },
-    'list-item': {
+    'vf-list-item': {
       component: 'li',
     },
-    link: {
+    'vf-link': {
       component: 'a',
       defaultProps: { href: '#', class: 'link link-primary' },
     },
-    video: {
+    'vf-video': {
       component: 'video',
       defaultProps: { controls: true, class: 'rounded-box w-full' },
     },
-    carousel: {
+    'vf-carousel': {
       component: 'div',
       defaultProps: { class: 'carousel rounded-box w-full' },
     },

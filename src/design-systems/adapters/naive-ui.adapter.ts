@@ -11,7 +11,7 @@ export const naiveUiAdapter: DesignSystemAdapter = {
   name: 'Naive UI',
   version: '^2.x',
   componentMap: {
-    button: {
+    'vf-button': {
       component: 'n-button',
       defaultProps: { type: 'primary' },
       propMap: {
@@ -47,7 +47,7 @@ export const naiveUiAdapter: DesignSystemAdapter = {
     'vf-heading': {
       component: 'n-h1',
     },
-    image: {
+    'vf-img': {
       component: 'n-image',
       defaultProps: { lazy: true },
       propMap: {
@@ -58,7 +58,7 @@ export const naiveUiAdapter: DesignSystemAdapter = {
         previewSrc: { name: 'preview-src' },
       },
     },
-    icon: {
+    'vf-icon': {
       component: 'n-icon',
       propMap: {
         size: { name: 'size' },
@@ -66,7 +66,7 @@ export const naiveUiAdapter: DesignSystemAdapter = {
         depth: { name: 'depth' },
       },
     },
-    badge: {
+    'vf-chip': {
       component: 'n-badge',
       propMap: {
         value: { name: 'value' },
@@ -75,7 +75,7 @@ export const naiveUiAdapter: DesignSystemAdapter = {
         dot: { name: 'dot' },
       },
     },
-    tag: {
+    'vf-tag': {
       component: 'n-tag',
       defaultProps: { round: false },
       propMap: {
@@ -97,7 +97,7 @@ export const naiveUiAdapter: DesignSystemAdapter = {
         closable: { name: 'closable' },
       },
     },
-    card: {
+    'vf-card': {
       component: 'n-card',
       propMap: {
         title: { name: 'title' },
@@ -105,10 +105,10 @@ export const naiveUiAdapter: DesignSystemAdapter = {
         segmented: { name: 'segmented' },
       },
     },
-    container: {
+    'vf-container': {
       component: 'div',
     },
-    grid: {
+    'vf-grid': {
       component: 'n-grid',
       defaultProps: { cols: 3, xGap: 12, yGap: 12 },
       propMap: {
@@ -118,18 +118,18 @@ export const naiveUiAdapter: DesignSystemAdapter = {
         responsive: { name: 'responsive' },
       },
     },
-    row: {
+    'vf-row': {
       component: 'n-flex',
       defaultProps: { vertical: false },
     },
-    column: {
+    'vf-column': {
       component: 'n-gi',
       propMap: {
         span: { name: 'span' },
         offset: { name: 'offset' },
       },
     },
-    divider: {
+    'vf-divider': {
       component: 'n-divider',
       propMap: {
         vertical: { name: 'vertical' },
@@ -137,10 +137,10 @@ export const naiveUiAdapter: DesignSystemAdapter = {
         dashed: { name: 'dashed' },
       },
     },
-    spacer: {
+    'vf-spacer': {
       component: 'div',
     },
-    input: {
+    'vf-input': {
       component: 'n-input',
       defaultProps: { type: 'text' },
       propMap: {
@@ -152,24 +152,24 @@ export const naiveUiAdapter: DesignSystemAdapter = {
         round: { name: 'round' },
       },
     },
-    list: {
+    'vf-list': {
       component: 'n-list',
     },
-    'list-item': {
+    'vf-list-item': {
       component: 'n-list-item',
     },
-    link: {
+    'vf-link': {
       component: 'n-a',
       defaultProps: { href: '#' },
       propMap: {
         href: { name: 'href' },
       },
     },
-    video: {
+    'vf-video': {
       component: 'video',
       defaultProps: { controls: true },
     },
-    carousel: {
+    'vf-carousel': {
       component: 'n-carousel',
       defaultProps: { autoplay: false },
       propMap: {

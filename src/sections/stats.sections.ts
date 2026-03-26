@@ -26,7 +26,7 @@ export const statsSections: SectionTemplate[] = [
                 style: { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' },
                 meta: { label: 'Statistique 1' },
                 children: [
-                  { id: 'icon-1', type: 'icon', props: { name: 'users', size: 32 }, meta: { label: 'Icône' } },
+                  { id: 'icon-1', type: 'vf-icon', props: { name: 'users', size: 32 }, meta: { label: 'Icône' } },
                   { id: 'number-1', type: 'vf-heading', text: '10 000+', props: { tag: 'h2' }, meta: { label: 'Chiffre', editableProps: [TAG_PROP] } },
                   { id: 'label-1', type: 'vf-text', text: 'Utilisateurs actifs', props: { tag: 'p' }, meta: { label: 'Label', editableProps: [TAG_PROP] } },
                 ],
@@ -37,7 +37,7 @@ export const statsSections: SectionTemplate[] = [
                 style: { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' },
                 meta: { label: 'Statistique 2' },
                 children: [
-                  { id: 'icon-2', type: 'icon', props: { name: 'trending-up', size: 32 }, meta: { label: 'Icône' } },
+                  { id: 'icon-2', type: 'vf-icon', props: { name: 'trending-up', size: 32 }, meta: { label: 'Icône' } },
                   { id: 'number-2', type: 'vf-heading', text: '99,9%', props: { tag: 'h2' }, meta: { label: 'Chiffre', editableProps: [TAG_PROP] } },
                   { id: 'label-2', type: 'vf-text', text: 'Disponibilité', props: { tag: 'p' }, meta: { label: 'Label', editableProps: [TAG_PROP] } },
                 ],
@@ -48,7 +48,7 @@ export const statsSections: SectionTemplate[] = [
                 style: { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' },
                 meta: { label: 'Statistique 3' },
                 children: [
-                  { id: 'icon-3', type: 'icon', props: { name: 'layers', size: 32 }, meta: { label: 'Icône' } },
+                  { id: 'icon-3', type: 'vf-icon', props: { name: 'layers', size: 32 }, meta: { label: 'Icône' } },
                   { id: 'number-3', type: 'vf-heading', text: '500+', props: { tag: 'h2' }, meta: { label: 'Chiffre', editableProps: [TAG_PROP] } },
                   { id: 'label-3', type: 'vf-text', text: 'Intégrations', props: { tag: 'p' }, meta: { label: 'Label', editableProps: [TAG_PROP] } },
                 ],
@@ -59,7 +59,7 @@ export const statsSections: SectionTemplate[] = [
                 style: { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '8px' },
                 meta: { label: 'Statistique 4' },
                 children: [
-                  { id: 'icon-4', type: 'icon', props: { name: 'star', size: 32 }, meta: { label: 'Icône' } },
+                  { id: 'icon-4', type: 'vf-icon', props: { name: 'star', size: 32 }, meta: { label: 'Icône' } },
                   { id: 'number-4', type: 'vf-heading', text: '4,9/5', props: { tag: 'h2' }, meta: { label: 'Chiffre', editableProps: [TAG_PROP] } },
                   { id: 'label-4', type: 'vf-text', text: 'Note moyenne', props: { tag: 'p' }, meta: { label: 'Label', editableProps: [TAG_PROP] } },
                 ],

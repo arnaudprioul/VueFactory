@@ -11,7 +11,7 @@ export const primevueAdapter: DesignSystemAdapter = {
   name: 'PrimeVue 4',
   version: '^4.x',
   componentMap: {
-    button: {
+    'vf-button': {
       component: 'Button',
       defaultProps: { severity: 'primary' },
       propMap: {
@@ -33,7 +33,7 @@ export const primevueAdapter: DesignSystemAdapter = {
         href: { name: 'as', transform: () => 'a' },
       },
     },
-    image: {
+    'vf-img': {
       component: 'Image',
       propMap: {
         src: { name: 'src' },
@@ -43,13 +43,13 @@ export const primevueAdapter: DesignSystemAdapter = {
         preview: { name: 'preview' },
       },
     },
-    icon: {
+    'vf-icon': {
       component: 'i',
       propMap: {
         name: { name: 'class', transform: (v) => `pi pi-${v}` },
       },
     },
-    badge: {
+    'vf-chip': {
       component: 'Badge',
       propMap: {
         value: { name: 'value' },
@@ -57,7 +57,7 @@ export const primevueAdapter: DesignSystemAdapter = {
         size: { name: 'size' },
       },
     },
-    tag: {
+    'vf-tag': {
       component: 'Tag',
       propMap: {
         text: { name: 'value' },
@@ -65,25 +65,25 @@ export const primevueAdapter: DesignSystemAdapter = {
         rounded: { name: 'rounded' },
       },
     },
-    card: {
+    'vf-card': {
       component: 'Card',
     },
-    container: {
+    'vf-container': {
       component: 'div',
     },
-    grid: {
+    'vf-grid': {
       component: 'div',
       defaultProps: { class: 'grid' },
     },
-    row: {
+    'vf-row': {
       component: 'div',
       defaultProps: { class: 'flex flex-row' },
     },
-    column: {
+    'vf-column': {
       component: 'div',
       defaultProps: { class: 'col' },
     },
-    divider: {
+    'vf-divider': {
       component: 'Divider',
       propMap: {
         layout: { name: 'layout' },
@@ -91,31 +91,31 @@ export const primevueAdapter: DesignSystemAdapter = {
         type: { name: 'type' },
       },
     },
-    spacer: {
+    'vf-spacer': {
       component: 'div',
     },
-    input: {
+    'vf-input': {
       component: 'InputText',
       propMap: {
         label: { name: 'placeholder' },
         disabled: { name: 'disabled' },
       },
     },
-    list: {
+    'vf-list': {
       component: 'Listbox',
     },
-    'list-item': {
+    'vf-list-item': {
       component: 'li',
     },
-    link: {
+    'vf-link': {
       component: 'a',
       defaultProps: { href: '#' },
     },
-    video: {
+    'vf-video': {
       component: 'video',
       defaultProps: { controls: true },
     },
-    carousel: {
+    'vf-carousel': {
       component: 'Carousel',
       propMap: {
         items: { name: 'value' },

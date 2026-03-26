@@ -1,20 +1,22 @@
 <template>
-  <!-- ── Image block (builtin fallback — overridden if DS defines 'image') ── -->
+  <!-- ── Image block (builtin fallback — overridden if DS defines 'vf-img') ── -->
   <img
-    v-if="block.type === 'image' && !adapterHasComponent"
+    v-if="block.type === 'vf-img' && !adapterHasComponent"
     v-bind="mergedProps"
     :class="['vf-block', 'vf-block--image', { 'vf-block--selected': isSelected && editMode }]"
     :style="[{ display: 'block' }, ownStyleOverrides]"
+    :data-vf-block-id="block.id"
     :src="(mergedProps.src as string) || IMAGE_PLACEHOLDER"
     :alt="(mergedProps.alt as string) || ''"
     @click.stop="!block.meta?.locked && onSelect()"
   />
 
-  <!-- ── Icon block (builtin fallback — overridden if DS defines 'icon') ─── -->
+  <!-- ── Icon block (builtin fallback — overridden if DS defines 'vf-icon') ─── -->
   <svg
-    v-else-if="block.type === 'icon' && !adapterHasComponent"
+    v-else-if="block.type === 'vf-icon' && !adapterHasComponent"
     :class="['vf-block', 'vf-block--icon', { 'vf-block--selected': isSelected && editMode }]"
     :style="ownStyleOverrides"
+    :data-vf-block-id="block.id"
     :width="(mergedProps.size as number) || 24"
     :height="(mergedProps.size as number) || 24"
     viewBox="0 0 24 24"
@@ -37,6 +39,7 @@
     :contenteditable="canEdit ? 'true' : undefined"
     :class="['vf-block', `vf-block--${block.type}`, { 'vf-block--selected': isSelected && editMode, 'vf-block--locked': block.meta?.locked, 'vf-block--editable': canEdit }]"
     :style="ownStyleOverrides"
+    :data-vf-block-id="block.id"
     :data-vf-ds="adapterHasComponent ? adapter.id : undefined"
     @click.stop="!block.meta?.locked && onSelect()"
     @input.stop="onTextInput"

@@ -32,7 +32,7 @@ export const testimonialsSections: SectionTemplate[] = [
             children: [
               {
                 id: 'testi-1',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Témoignage 1' },
                 children: [
                   {
@@ -41,11 +41,11 @@ export const testimonialsSections: SectionTemplate[] = [
                     style: { display: 'flex', flexDirection: 'row', gap: '2px', marginBottom: '12px' },
                     meta: { label: 'Étoiles', locked: true },
                     children: [
-                      { id: 'star-1-1', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-1-2', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-1-3', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-1-4', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-1-5', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-1-1', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-1-2', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-1-3', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-1-4', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-1-5', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
                     ],
                   },
                   { id: 'quote-1', type: 'vf-text', text: '« VueFactory a transformé notre workflow. Nous livrons des pages deux fois plus vite. »', props: { tag: 'p' }, meta: { label: 'Citation', editableProps: [TAG_PROP] } },
@@ -57,7 +57,7 @@ export const testimonialsSections: SectionTemplate[] = [
                     children: [
                       {
                         id: 'avatar-1',
-                        type: 'image',
+                        type: 'vf-img',
                         props: { src: 'https://i.pravatar.cc/48?img=1', alt: 'Avatar' },
                         style: { width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' },
                         meta: {
@@ -84,7 +84,7 @@ export const testimonialsSections: SectionTemplate[] = [
               },
               {
                 id: 'testi-2',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Témoignage 2' },
                 children: [
                   {
@@ -93,11 +93,11 @@ export const testimonialsSections: SectionTemplate[] = [
                     style: { display: 'flex', flexDirection: 'row', gap: '2px', marginBottom: '12px' },
                     meta: { label: 'Étoiles', locked: true },
                     children: [
-                      { id: 'star-2-1', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-2-2', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-2-3', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-2-4', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-2-5', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-2-1', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-2-2', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-2-3', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-2-4', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-2-5', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
                     ],
                   },
                   { id: 'quote-2', type: 'vf-text', text: '« L\'intégration avec notre design system DaisyUI a été parfaite. Zéro friction. »', props: { tag: 'p' }, meta: { label: 'Citation', editableProps: [TAG_PROP] } },
@@ -109,7 +109,7 @@ export const testimonialsSections: SectionTemplate[] = [
                     children: [
                       {
                         id: 'avatar-2',
-                        type: 'image',
+                        type: 'vf-img',
                         props: { src: 'https://i.pravatar.cc/48?img=5', alt: 'Avatar' },
                         style: { width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' },
                         meta: {
@@ -136,7 +136,7 @@ export const testimonialsSections: SectionTemplate[] = [
               },
               {
                 id: 'testi-3',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Témoignage 3' },
                 children: [
                   {
@@ -145,11 +145,11 @@ export const testimonialsSections: SectionTemplate[] = [
                     style: { display: 'flex', flexDirection: 'row', gap: '2px', marginBottom: '12px' },
                     meta: { label: 'Étoiles', locked: true },
                     children: [
-                      { id: 'star-3-1', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-3-2', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-3-3', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-3-4', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
-                      { id: 'star-3-5', type: 'icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-3-1', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-3-2', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-3-3', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-3-4', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
+                      { id: 'star-3-5', type: 'vf-icon', props: { name: 'star', size: 16 }, meta: { label: 'Étoile' } },
                     ],
                   },
                   { id: 'quote-3', type: 'vf-text', text: '« Nos clients adorent la rapidité de mise en ligne. Le page builder est intuitif et puissant. »', props: { tag: 'p' }, meta: { label: 'Citation', editableProps: [TAG_PROP] } },
@@ -161,7 +161,7 @@ export const testimonialsSections: SectionTemplate[] = [
                     children: [
                       {
                         id: 'avatar-3',
-                        type: 'image',
+                        type: 'vf-img',
                         props: { src: 'https://i.pravatar.cc/48?img=9', alt: 'Avatar' },
                         style: { width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' },
                         meta: {

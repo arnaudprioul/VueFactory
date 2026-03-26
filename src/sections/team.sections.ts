@@ -32,12 +32,12 @@ export const teamSections: SectionTemplate[] = [
             children: [
               {
                 id: 'member-1',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Membre 1' },
                 children: [
                   {
                     id: 'photo-1',
-                    type: 'image',
+                    type: 'vf-img',
                     props: { src: 'https://i.pravatar.cc/300?img=12', alt: 'Photo membre' },
                     style: { width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '16px' },
                     meta: {
@@ -56,21 +56,21 @@ export const teamSections: SectionTemplate[] = [
                     style: { display: 'flex', flexDirection: 'row', gap: '12px', marginTop: '12px' },
                     meta: { label: 'Socials', locked: true },
                     children: [
-                      { id: 'linkedin-1', type: 'icon', props: { name: 'briefcase', size: 18 }, meta: { label: 'LinkedIn' } },
-                      { id: 'twitter-1', type: 'icon', props: { name: 'message', size: 18 }, meta: { label: 'Twitter' } },
-                      { id: 'mail-1', type: 'icon', props: { name: 'mail', size: 18 }, meta: { label: 'Email' } },
+                      { id: 'linkedin-1', type: 'vf-icon', props: { name: 'briefcase', size: 18 }, meta: { label: 'LinkedIn' } },
+                      { id: 'twitter-1', type: 'vf-icon', props: { name: 'message', size: 18 }, meta: { label: 'Twitter' } },
+                      { id: 'mail-1', type: 'vf-icon', props: { name: 'mail', size: 18 }, meta: { label: 'Email' } },
                     ],
                   },
                 ],
               },
               {
                 id: 'member-2',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Membre 2' },
                 children: [
                   {
                     id: 'photo-2',
-                    type: 'image',
+                    type: 'vf-img',
                     props: { src: 'https://i.pravatar.cc/300?img=25', alt: 'Photo membre' },
                     style: { width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '16px' },
                     meta: {
@@ -89,21 +89,21 @@ export const teamSections: SectionTemplate[] = [
                     style: { display: 'flex', flexDirection: 'row', gap: '12px', marginTop: '12px' },
                     meta: { label: 'Socials', locked: true },
                     children: [
-                      { id: 'linkedin-2', type: 'icon', props: { name: 'briefcase', size: 18 }, meta: { label: 'LinkedIn' } },
-                      { id: 'twitter-2', type: 'icon', props: { name: 'message', size: 18 }, meta: { label: 'Twitter' } },
-                      { id: 'globe-2', type: 'icon', props: { name: 'globe', size: 18 }, meta: { label: 'Site web' } },
+                      { id: 'linkedin-2', type: 'vf-icon', props: { name: 'briefcase', size: 18 }, meta: { label: 'LinkedIn' } },
+                      { id: 'twitter-2', type: 'vf-icon', props: { name: 'message', size: 18 }, meta: { label: 'Twitter' } },
+                      { id: 'globe-2', type: 'vf-icon', props: { name: 'globe', size: 18 }, meta: { label: 'Site web' } },
                     ],
                   },
                 ],
               },
               {
                 id: 'member-3',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Membre 3' },
                 children: [
                   {
                     id: 'photo-3',
-                    type: 'image',
+                    type: 'vf-img',
                     props: { src: 'https://i.pravatar.cc/300?img=33', alt: 'Photo membre' },
                     style: { width: '100%', height: '200px', objectFit: 'cover', borderRadius: '8px', marginBottom: '16px' },
                     meta: {
@@ -122,9 +122,9 @@ export const teamSections: SectionTemplate[] = [
                     style: { display: 'flex', flexDirection: 'row', gap: '12px', marginTop: '12px' },
                     meta: { label: 'Socials', locked: true },
                     children: [
-                      { id: 'github-3', type: 'icon', props: { name: 'code', size: 18 }, meta: { label: 'GitHub' } },
-                      { id: 'linkedin-3', type: 'icon', props: { name: 'briefcase', size: 18 }, meta: { label: 'LinkedIn' } },
-                      { id: 'mail-3', type: 'icon', props: { name: 'mail', size: 18 }, meta: { label: 'Email' } },
+                      { id: 'github-3', type: 'vf-icon', props: { name: 'code', size: 18 }, meta: { label: 'GitHub' } },
+                      { id: 'linkedin-3', type: 'vf-icon', props: { name: 'briefcase', size: 18 }, meta: { label: 'LinkedIn' } },
+                      { id: 'mail-3', type: 'vf-icon', props: { name: 'mail', size: 18 }, meta: { label: 'Email' } },
                     ],
                   },
                 ],

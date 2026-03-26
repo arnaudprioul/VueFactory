@@ -153,6 +153,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import type { SectionInstance, SectionTemplate, BlockDefinition, EditableProp } from '../../types'
+import { resolveEditableProps } from '../../utils/block-props.util'
 
 interface Props {
   selectedSection: SectionInstance | null
@@ -185,7 +186,11 @@ const selectedBlock = computed<BlockDefinition | null>(() => {
   return findBlock(props.selectedTemplate.blocks, props.selectedBlockId)
 })
 
-const editableProps = computed<EditableProp[]>(() => selectedBlock.value?.meta?.editableProps ?? [])
+const editableProps = computed<EditableProp[]>(() =>
+  selectedBlock.value
+    ? resolveEditableProps(selectedBlock.value.type, selectedBlock.value.meta?.editableProps)
+    : []
+)
 
 function getPropValue (key: string, defaultValue: unknown): unknown {
   if (!props.selectedSection || !props.selectedBlockId) return defaultValue

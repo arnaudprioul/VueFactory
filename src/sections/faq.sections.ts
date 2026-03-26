@@ -24,7 +24,7 @@ export const faqSections: SectionTemplate[] = [
             children: [
               {
                 id: 'faq-1',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'FAQ 1' },
                 children: [
                   { id: 'q1', type: 'vf-heading', text: 'Quels design systems sont supportés ?', props: { tag: 'h3' }, meta: { label: 'Question', editableProps: [TAG_PROP] } },
@@ -33,7 +33,7 @@ export const faqSections: SectionTemplate[] = [
               },
               {
                 id: 'faq-2',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'FAQ 2' },
                 children: [
                   { id: 'q2', type: 'vf-heading', text: 'Puis-je exporter ma page ?', props: { tag: 'h3' }, meta: { label: 'Question', editableProps: [TAG_PROP] } },
@@ -42,7 +42,7 @@ export const faqSections: SectionTemplate[] = [
               },
               {
                 id: 'faq-3',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'FAQ 3' },
                 children: [
                   { id: 'q3', type: 'vf-heading', text: 'Y a-t-il des limites sur les sections ?', props: { tag: 'h3' }, meta: { label: 'Question', editableProps: [TAG_PROP] } },
@@ -51,7 +51,7 @@ export const faqSections: SectionTemplate[] = [
               },
               {
                 id: 'faq-4',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'FAQ 4' },
                 children: [
                   { id: 'q4', type: 'vf-heading', text: 'Comment utiliser mon propre design system ?', props: { tag: 'h3' }, meta: { label: 'Question', editableProps: [TAG_PROP] } },

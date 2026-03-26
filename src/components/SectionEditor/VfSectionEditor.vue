@@ -106,7 +106,7 @@
         </main>
 
         <!-- RIGHT: Properties panel -->
-        <aside class="vf-se-right">
+        <aside class="vf-se-right" @click="onRightPanelClick">
 
           <!-- ── Section settings (collapsible) ───────────────────────── -->
           <div class="vf-se-right__section-settings">
@@ -192,100 +192,33 @@
             <!-- Props tab -->
             <div v-if="rightTab === 'props'" class="vf-se-right__content">
 
-              <!-- Block name (editable) -->
-              <div class="vf-se-block-header">
-                <span class="vf-se-block-header__type">{{ selectedBlock.type }}</span>
+              <!-- Block header -->
+              <div class="vf-se-block-hd">
+                <span class="vf-se-block-hd__type">{{ humanizeType(selectedBlock.type) }}</span>
                 <input
-                  class="vf-se-block-header__name"
+                  class="vf-se-block-hd__name"
                   :value="selectedBlock.meta?.label ?? selectedBlock.id"
                   placeholder="Nom du bloc"
                   @change="onRenameBlock({ blockId: selectedBlock.id, label: ($event.target as HTMLInputElement).value.trim() || (selectedBlock.meta?.label ?? selectedBlock.id) })"
                 />
+                <div class="vf-se-block-hd__opacity">
+                  <input
+                    type="number" min="0" max="100"
+                    class="vf-se-block-hd__opacity-input"
+                    :value="Math.round(parseFloat(getStyleValue('opacity','1'))*100)"
+                    @input="setStyleValue('opacity', String(Number(($event.target as HTMLInputElement).value)/100))"
+                  />
+                  <span class="vf-se-block-hd__opacity-unit">%</span>
+                </div>
               </div>
 
-              <!-- ═══ TEXTE ══════════════════════════════════════════════════════════ -->
-              <template v-if="isTextBlock || selectedBlock.text !== undefined || hasTextProp">
-                <div class="vf-se-section-title">Texte</div>
-                <div class="vf-se-panel__bd">
-
-                    <!-- Content input -->
-                    <div class="vf-se-field">
-                      <label class="vf-se-label">Contenu</label>
-                      <textarea
-                        class="vf-se-textarea"
-                        :value="getTextValue()"
-                        rows="3"
-                        @input="onUpdateText({ instanceId: instance.instanceId, blockId: selectedBlockId!, text: ($event.target as HTMLTextAreaElement).value })"
-                      />
-                    </div>
-
-                    <!-- Font family -->
-                    <div class="vf-se-select-wrap">
-                      <select class="vf-se-select" :value="getStyleValue('fontFamily', 'Inter')" @change="setStyleValue('fontFamily', ($event.target as HTMLSelectElement).value)">
-                        <option v-for="f in FONT_FAMILIES" :key="f" :value="f">{{ f }}</option>
-                      </select>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                    </div>
-
-                    <!-- Size + Weight -->
-                    <div class="vf-se-type-row">
-                      <div class="vf-se-number-field" style="flex:1">
-                        <span class="vf-se-number-icon-label">A</span>
-                        <input type="number" min="1" max="999" class="vf-se-number-input" :value="parsePx(getStyleValue('fontSize', '16px'))" placeholder="16" @input="setStyleValue('fontSize', ($event.target as HTMLInputElement).value + 'px')" />
-                        <span class="vf-se-number-unit">px</span>
-                      </div>
-                      <div class="vf-se-select-wrap" style="flex:1.4">
-                        <select class="vf-se-select" :value="getStyleValue('fontWeight', '400')" @change="setStyleValue('fontWeight', ($event.target as HTMLSelectElement).value)">
-                          <option v-for="w in FONT_WEIGHTS" :key="w.value" :value="w.value">{{ w.label }}</option>
-                        </select>
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                      </div>
-                    </div>
-
-                    <!-- Line height + Letter spacing -->
-                    <div class="vf-se-type-row">
-                      <div class="vf-se-number-field" style="flex:1">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-number-icon"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="8 7 12 3 16 7"/><polyline points="8 17 12 21 16 17"/></svg>
-                        <input type="number" min="0" step="0.1" class="vf-se-number-input" :value="parsePx(getStyleValue('lineHeight', ''))" placeholder="auto" @input="setStyleValue('lineHeight', ($event.target as HTMLInputElement).value)" />
-                      </div>
-                      <div class="vf-se-number-field" style="flex:1">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-number-icon"><line x1="3" y1="12" x2="21" y2="12"/><polyline points="7 8 3 12 7 16"/><polyline points="17 8 21 12 17 16"/></svg>
-                        <input type="number" step="0.5" class="vf-se-number-input" :value="parsePx(getStyleValue('letterSpacing', '0px'))" placeholder="0" @input="setStyleValue('letterSpacing', ($event.target as HTMLInputElement).value + 'px')" />
-                        <span class="vf-se-number-unit">px</span>
-                      </div>
-                    </div>
-
-                    <!-- Alignment + Decoration -->
-                    <div class="vf-se-fmt-toolbar">
-                      <div class="vf-se-fmt-group">
-                        <button v-for="(icon, align) in ALIGN_ICONS" :key="align"
-                          :class="['vf-se-fmt-btn', { 'vf-se-fmt-btn--active': getStyleValue('textAlign') === align }]"
-                          :title="`Aligner ${align}`"
-                          @click="setStyleValue('textAlign', getStyleValue('textAlign') === align ? '' : align)">
-                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path :d="icon"/></svg>
-                        </button>
-                      </div>
-                      <div class="vf-se-fmt-sep"/>
-                      <div class="vf-se-fmt-group">
-                        <button :class="['vf-se-fmt-btn','vf-se-fmt-btn--text',{ 'vf-se-fmt-btn--active': isBold }]" title="Gras" @click="toggleBold">B</button>
-                        <button :class="['vf-se-fmt-btn','vf-se-fmt-btn--text','vf-se-fmt-btn--italic',{ 'vf-se-fmt-btn--active': getStyleValue('fontStyle')==='italic' }]" title="Italique" @click="toggleItalic">I</button>
-                        <button :class="['vf-se-fmt-btn','vf-se-fmt-btn--text','vf-se-fmt-btn--underline',{ 'vf-se-fmt-btn--active': getStyleValue('textDecoration').includes('underline') }]" title="Souligné" @click="toggleDecoration('underline')">U</button>
-                        <button :class="['vf-se-fmt-btn','vf-se-fmt-btn--text','vf-se-fmt-btn--strike',{ 'vf-se-fmt-btn--active': getStyleValue('textDecoration').includes('line-through') }]" title="Barré" @click="toggleDecoration('line-through')">S</button>
-                      </div>
-                    </div>
-
-                    <!-- Text color -->
-                    <div class="vf-se-color-row">
-                      <input type="color" :value="getStyleValue('color','#000000')" class="vf-se-color-swatch" @input="setStyleValue('color',($event.target as HTMLInputElement).value)" />
-                      <input type="text" :value="getStyleValue('color','')" class="vf-se-input" style="flex:1" placeholder="#000000 ou rgba(…)" @input="setStyleValue('color',($event.target as HTMLInputElement).value)" />
-                    </div>
-                  </div>
-              </template>
-
-              <!-- ═══ IMAGE ════════════════════════════════════════════════════════════ -->
+              <!-- ─── IMAGE ─────────────────────────────────────────────────────────── -->
               <template v-if="isImageBlock">
-                <div class="vf-se-section-title">Image</div>
-                <div class="vf-se-panel__bd">
+                <button class="vf-se-sec-hd" @click="panelOpen.image = !panelOpen.image">
+                  <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.image}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span class="vf-se-sec-hd__label">Image</span>
+                </button>
+                <div v-if="panelOpen.image" class="vf-se-sec-body">
                   <!-- Hidden file input -->
                   <input ref="imageFileInputRef" type="file" accept="image/*" style="display:none" @change="onImageFileChange" />
                   <!-- Preview -->
@@ -324,10 +257,13 @@
                 </div>
               </template>
 
-              <!-- ═══ ICÔNE ═════════════════════════════════════════════════════════════ -->
+              <!-- ─── ICÔNE ──────────────────────────────────────────────────────────── -->
               <template v-if="isIconBlock">
-                <div class="vf-se-section-title">Icône</div>
-                <div class="vf-se-panel__bd">
+                <button class="vf-se-sec-hd" @click="panelOpen.icon = !panelOpen.icon">
+                  <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.icon}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span class="vf-se-sec-hd__label">Icône</span>
+                </button>
+                <div v-if="panelOpen.icon" class="vf-se-sec-body">
                   <!-- Size + Color row -->
                   <div class="vf-se-type-row">
                     <div class="vf-se-number-field" style="flex:1">
@@ -361,13 +297,18 @@
                 </div>
               </template>
 
-              <!-- ═══ PROPRIÉTÉS DU COMPOSANT ════════════════════════════════════════ -->
+              <!-- ─── PROPRIÉTÉS ─────────────────────────────────────────────────────── -->
               <template v-if="editableProps.length > 0">
-                <div class="vf-se-section-title">Propriétés</div>
-                <div class="vf-se-panel__bd">
+                <button class="vf-se-sec-hd" @click="panelOpen.props = !panelOpen.props">
+                  <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.props}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span class="vf-se-sec-hd__label">Propriétés</span>
+                </button>
+                <div v-if="panelOpen.props" class="vf-se-sec-body">
                   <div v-for="prop in editableProps" :key="prop.key" class="vf-se-field">
                     <label class="vf-se-label">{{ prop.label }}</label>
-                    <input v-if="prop.type==='text'||prop.type==='url'||prop.type==='image-url'" :value="getPropValue(prop.key,prop.default)" class="vf-se-input" :type="prop.type==='url'||prop.type==='image-url'?'url':'text'" :placeholder="prop.placeholder??String(prop.default??'')" @input="onUpdateProp({instanceId:instance.instanceId,blockId:selectedBlockId!,key:prop.key,value:($event.target as HTMLInputElement).value})" />
+                    <!-- Text content prop — routes to textOverrides, not propOverrides -->
+                    <textarea v-if="prop.key==='text'" :value="getTextValue()" class="vf-se-textarea" rows="3" @input="onUpdateText({instanceId:instance.instanceId,blockId:selectedBlockId!,text:($event.target as HTMLTextAreaElement).value})" />
+                    <input v-else-if="prop.type==='text'||prop.type==='url'||prop.type==='image-url'" :value="getPropValue(prop.key,prop.default)" class="vf-se-input" :type="prop.type==='url'||prop.type==='image-url'?'url':'text'" :placeholder="prop.placeholder??String(prop.default??'')" @input="onUpdateProp({instanceId:instance.instanceId,blockId:selectedBlockId!,key:prop.key,value:($event.target as HTMLInputElement).value})" />
                     <textarea v-else-if="prop.type==='textarea'" :value="String(getPropValue(prop.key,prop.default)??'')" class="vf-se-textarea" rows="3" @input="onUpdateProp({instanceId:instance.instanceId,blockId:selectedBlockId!,key:prop.key,value:($event.target as HTMLTextAreaElement).value})" />
                     <input v-else-if="prop.type==='number'" :value="getPropValue(prop.key,prop.default)" class="vf-se-input" type="number" @input="onUpdateProp({instanceId:instance.instanceId,blockId:selectedBlockId!,key:prop.key,value:Number(($event.target as HTMLInputElement).value)})" />
                     <label v-else-if="prop.type==='boolean'" class="vf-se-toggle">
@@ -388,306 +329,430 @@
                 </div>
               </template>
 
-              <!-- ═══ TAILLE & DISPOSITION ═══════════════════════════════════════════ -->
-              <div class="vf-se-section-title">Taille &amp; disposition</div>
-              <div class="vf-se-panel__bd">
-                  <!-- W / H -->
+              <!-- ─── TYPOGRAPHIE ────────────────────────────────────────────────────── -->
+              <template v-if="isTextBlock">
+                <button class="vf-se-sec-hd" @click="panelOpen.typo = !panelOpen.typo">
+                  <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.typo}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span class="vf-se-sec-hd__label">Typographie</span>
+                </button>
+                <div v-if="panelOpen.typo" class="vf-se-sec-body">
+                  <!-- Font family -->
+                  <div class="vf-se-select-wrap">
+                    <select class="vf-se-select" :value="getStyleValue('fontFamily', 'Inter')" @change="setStyleValue('fontFamily', ($event.target as HTMLSelectElement).value)">
+                      <option v-for="f in FONT_FAMILIES" :key="f" :value="f">{{ f }}</option>
+                    </select>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                  </div>
+                  <!-- Size + Weight -->
                   <div class="vf-se-type-row">
                     <div class="vf-se-number-field" style="flex:1">
-                      <span class="vf-se-number-icon-label" title="Largeur">W</span>
-                      <input type="text" class="vf-se-number-input" :value="getStyleValue('width','')" placeholder="auto" @input="setStyleValue('width',($event.target as HTMLInputElement).value)" />
+                      <span class="vf-se-number-icon-label">A</span>
+                      <input type="number" min="1" max="999" class="vf-se-number-input" :value="parsePx(getStyleValue('fontSize', '16px'))" placeholder="16" @input="setStyleValue('fontSize', ($event.target as HTMLInputElement).value + 'px')" />
+                      <span class="vf-se-number-unit">px</span>
                     </div>
-                    <div class="vf-se-number-field" style="flex:1">
-                      <span class="vf-se-number-icon-label" title="Hauteur">H</span>
-                      <input type="text" class="vf-se-number-input" :value="getStyleValue('height','')" placeholder="auto" @input="setStyleValue('height',($event.target as HTMLInputElement).value)" />
+                    <div class="vf-se-select-wrap" style="flex:1.4">
+                      <select class="vf-se-select" :value="getStyleValue('fontWeight', '400')" @change="setStyleValue('fontWeight', ($event.target as HTMLSelectElement).value)">
+                        <option v-for="w in FONT_WEIGHTS" :key="w.value" :value="w.value">{{ w.label }}</option>
+                      </select>
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
                     </div>
                   </div>
-                  <!-- MaxW / MinH -->
+                  <!-- Line height + Letter spacing -->
                   <div class="vf-se-type-row">
                     <div class="vf-se-number-field" style="flex:1">
-                      <span class="vf-se-number-icon-label" title="Largeur max">Max W</span>
-                      <input type="text" class="vf-se-number-input" :value="getStyleValue('maxWidth','')" placeholder="none" @input="setStyleValue('maxWidth',($event.target as HTMLInputElement).value)" />
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-number-icon"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="8 7 12 3 16 7"/><polyline points="8 17 12 21 16 17"/></svg>
+                      <input type="number" min="0" step="0.1" class="vf-se-number-input" :value="parsePx(getStyleValue('lineHeight', ''))" placeholder="auto" @input="setStyleValue('lineHeight', ($event.target as HTMLInputElement).value)" />
                     </div>
                     <div class="vf-se-number-field" style="flex:1">
-                      <span class="vf-se-number-icon-label" title="Hauteur min">Min H</span>
-                      <input type="text" class="vf-se-number-input" :value="getStyleValue('minHeight','')" placeholder="0" @input="setStyleValue('minHeight',($event.target as HTMLInputElement).value)" />
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-number-icon"><line x1="3" y1="12" x2="21" y2="12"/><polyline points="7 8 3 12 7 16"/><polyline points="17 8 21 12 17 16"/></svg>
+                      <input type="number" step="0.5" class="vf-se-number-input" :value="parsePx(getStyleValue('letterSpacing', '0px'))" placeholder="0" @input="setStyleValue('letterSpacing', ($event.target as HTMLInputElement).value + 'px')" />
+                      <span class="vf-se-number-unit">px</span>
                     </div>
                   </div>
-                  <!-- Display -->
-                  <div class="vf-se-field">
-                    <label class="vf-se-label">Display</label>
-                    <div class="vf-se-select-wrap">
-                      <select class="vf-se-select" :value="getStyleValue('display','')" @change="setStyleValue('display',($event.target as HTMLSelectElement).value)">
-                        <option value="">— hérité —</option>
-                        <option value="block">block</option>
-                        <option value="inline">inline</option>
-                        <option value="inline-block">inline-block</option>
-                        <option value="flex">flex</option>
-                        <option value="inline-flex">inline-flex</option>
-                        <option value="grid">grid</option>
-                        <option value="none">none</option>
-                      </select>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                    </div>
-                  </div>
-                  <!-- Flex sub-controls -->
-                  <template v-if="getStyleValue('display','').includes('flex')">
-                    <div class="vf-se-type-row">
-                      <div class="vf-se-field" style="flex:1">
-                        <label class="vf-se-label">Direction</label>
-                        <div class="vf-se-select-wrap">
-                          <select class="vf-se-select" :value="getStyleValue('flexDirection','row')" @change="setStyleValue('flexDirection',($event.target as HTMLSelectElement).value)">
-                            <option value="row">row</option>
-                            <option value="row-reverse">row-reverse</option>
-                            <option value="column">column</option>
-                            <option value="column-reverse">column-reverse</option>
-                          </select>
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
-                      </div>
-                      <div class="vf-se-field" style="flex:1">
-                        <label class="vf-se-label">Wrap</label>
-                        <div class="vf-se-select-wrap">
-                          <select class="vf-se-select" :value="getStyleValue('flexWrap','nowrap')" @change="setStyleValue('flexWrap',($event.target as HTMLSelectElement).value)">
-                            <option value="nowrap">nowrap</option>
-                            <option value="wrap">wrap</option>
-                            <option value="wrap-reverse">wrap-reverse</option>
-                          </select>
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="vf-se-type-row">
-                      <div class="vf-se-field" style="flex:1">
-                        <label class="vf-se-label">Align items</label>
-                        <div class="vf-se-select-wrap">
-                          <select class="vf-se-select" :value="getStyleValue('alignItems','')" @change="setStyleValue('alignItems',($event.target as HTMLSelectElement).value)">
-                            <option value="">—</option>
-                            <option value="flex-start">flex-start</option>
-                            <option value="center">center</option>
-                            <option value="flex-end">flex-end</option>
-                            <option value="stretch">stretch</option>
-                            <option value="baseline">baseline</option>
-                          </select>
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
-                      </div>
-                      <div class="vf-se-field" style="flex:1">
-                        <label class="vf-se-label">Justify</label>
-                        <div class="vf-se-select-wrap">
-                          <select class="vf-se-select" :value="getStyleValue('justifyContent','')" @change="setStyleValue('justifyContent',($event.target as HTMLSelectElement).value)">
-                            <option value="">—</option>
-                            <option value="flex-start">flex-start</option>
-                            <option value="center">center</option>
-                            <option value="flex-end">flex-end</option>
-                            <option value="space-between">space-between</option>
-                            <option value="space-around">space-around</option>
-                            <option value="space-evenly">space-evenly</option>
-                          </select>
-                          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="vf-se-field">
-                      <label class="vf-se-label">Gap</label>
-                      <div class="vf-se-number-field">
-                        <input type="text" class="vf-se-number-input" :value="getStyleValue('gap','')" placeholder="0" @input="setStyleValue('gap',($event.target as HTMLInputElement).value)" />
-                      </div>
-                    </div>
-                  </template>
-                </div>
-
-              <!-- ═══ ESPACEMENT ═════════════════════════════════════════════════════ -->
-              <div class="vf-se-section-title">Espacement</div>
-              <div class="vf-se-panel__bd">
-
-                  <!-- Padding -->
-                  <div class="vf-se-spacing-group">
-                    <div class="vf-se-spacing-label-row">
-                      <span class="vf-se-spacing-title">Padding</span>
-                      <button :class="['vf-se-link-btn', { 'vf-se-link-btn--active': paddingLinked }]" title="Lier les côtés" @click="paddingLinked = !paddingLinked">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                  <!-- Alignment + Decoration -->
+                  <div class="vf-se-fmt-toolbar">
+                    <div class="vf-se-fmt-group">
+                      <button v-for="(icon, align) in ALIGN_ICONS" :key="align"
+                        :class="['vf-se-fmt-btn', { 'vf-se-fmt-btn--active': getStyleValue('textAlign') === align }]"
+                        :title="`Aligner ${align}`"
+                        @click="setStyleValue('textAlign', getStyleValue('textAlign') === align ? '' : align)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path :d="icon"/></svg>
                       </button>
                     </div>
-                    <div class="vf-se-spacing-cross">
-                      <div class="vf-se-spacing-cross__top">
-                        <input type="number" min="0" class="vf-se-spacing-input" :value="getSpacingNum('padding','Top')" placeholder="0" @input="setSpacing('padding','Top',($event.target as HTMLInputElement).value)" />
-                      </div>
-                      <div class="vf-se-spacing-cross__middle">
-                        <input type="number" min="0" class="vf-se-spacing-input" :value="getSpacingNum('padding','Left')" placeholder="0" @input="setSpacing('padding','Left',($event.target as HTMLInputElement).value)" />
-                        <div class="vf-se-spacing-cross__center">
-                          <span class="vf-se-spacing-cross__label">P</span>
-                        </div>
-                        <input type="number" min="0" class="vf-se-spacing-input" :value="getSpacingNum('padding','Right')" placeholder="0" @input="setSpacing('padding','Right',($event.target as HTMLInputElement).value)" />
-                      </div>
-                      <div class="vf-se-spacing-cross__bottom">
-                        <input type="number" min="0" class="vf-se-spacing-input" :value="getSpacingNum('padding','Bottom')" placeholder="0" @input="setSpacing('padding','Bottom',($event.target as HTMLInputElement).value)" />
-                      </div>
+                    <div class="vf-se-fmt-sep"/>
+                    <div class="vf-se-fmt-group">
+                      <button :class="['vf-se-fmt-btn','vf-se-fmt-btn--text',{ 'vf-se-fmt-btn--active': isBold }]" title="Gras" @click="toggleBold">B</button>
+                      <button :class="['vf-se-fmt-btn','vf-se-fmt-btn--text','vf-se-fmt-btn--italic',{ 'vf-se-fmt-btn--active': getStyleValue('fontStyle')==='italic' }]" title="Italique" @click="toggleItalic">I</button>
+                      <button :class="['vf-se-fmt-btn','vf-se-fmt-btn--text','vf-se-fmt-btn--underline',{ 'vf-se-fmt-btn--active': getStyleValue('textDecoration').includes('underline') }]" title="Souligné" @click="toggleDecoration('underline')">U</button>
+                      <button :class="['vf-se-fmt-btn','vf-se-fmt-btn--text','vf-se-fmt-btn--strike',{ 'vf-se-fmt-btn--active': getStyleValue('textDecoration').includes('line-through') }]" title="Barré" @click="toggleDecoration('line-through')">S</button>
                     </div>
                   </div>
+                  <!-- Text color -->
+                  <div class="vf-se-color-row">
+                    <div class="vf-se-fill-swatch-wrap">
+                      <button class="vf-se-fill-swatch vf-se-fill-swatch--sm"
+                        :style="{background: getStyleValue('color','#000000')}"
+                        @click.stop="colorPopupKey = colorPopupKey==='text-color' ? null : 'text-color'" />
+                      <div v-if="colorPopupKey === 'text-color'" class="vf-se-color-popup" @click.stop>
+                        <input type="color" class="vf-se-color-popup__picker" :value="getStyleValue('color','#000000')" @input="setStyleValue('color',($event.target as HTMLInputElement).value)" />
+                        <div class="vf-se-color-popup__row">
+                          <input type="text" class="vf-se-color-popup__hex" :value="getStyleValue('color','')" placeholder="#000000 ou rgba(…)" @input="setStyleValue('color',($event.target as HTMLInputElement).value)" />
+                        </div>
+                      </div>
+                    </div>
+                    <span style="font-size:11px;color:#374151;flex:1">{{ getStyleValue('color','') || '#000000' }}</span>
+                  </div>
+                </div>
+              </template>
 
-                  <!-- Margin -->
-                  <div class="vf-se-spacing-group">
-                    <div class="vf-se-spacing-label-row">
-                      <span class="vf-se-spacing-title">Margin</span>
-                      <button :class="['vf-se-link-btn', { 'vf-se-link-btn--active': marginLinked }]" title="Lier les côtés" @click="marginLinked = !marginLinked">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              <!-- ─── LAYOUT ─────────────────────────────────────────────────────────── -->
+              <button class="vf-se-sec-hd" @click="panelOpen.layout = !panelOpen.layout">
+                <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.layout}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                <span class="vf-se-sec-hd__label">Layout</span>
+              </button>
+              <div v-if="panelOpen.layout" class="vf-se-sec-body">
+                <!-- W / H compact row -->
+                <div class="vf-se-dim-row">
+                  <div class="vf-se-dim-field">
+                    <span class="vf-se-dim-lbl">W</span>
+                    <input type="text" class="vf-se-dim-input" :value="getStyleValue('width','')" placeholder="auto" @input="setStyleValue('width',($event.target as HTMLInputElement).value)" />
+                  </div>
+                  <div class="vf-se-dim-field">
+                    <span class="vf-se-dim-lbl">H</span>
+                    <input type="text" class="vf-se-dim-input" :value="getStyleValue('height','')" placeholder="auto" @input="setStyleValue('height',($event.target as HTMLInputElement).value)" />
+                  </div>
+                </div>
+
+                <!-- Display mode icon toggle buttons -->
+                <div class="vf-se-display-row">
+                  <button
+                    v-for="mode in DISPLAY_MODES"
+                    :key="mode.value"
+                    :class="['vf-se-display-btn', { 'vf-se-display-btn--active': currentDisplay === mode.value }]"
+                    :title="mode.label"
+                    @click="setStyleValue('display', mode.value)"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path :d="mode.icon"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <!-- Auto-layout panel (flex) -->
+                <template v-if="isFlex">
+                  <div class="vf-se-autolayout-row">
+                    <!-- Direction + wrap buttons -->
+                    <div class="vf-se-dir-btns">
+                      <button
+                        :class="['vf-se-dir-btn', { 'vf-se-dir-btn--active': isFlexRow }]"
+                        title="Horizontal (row)"
+                        @click="setStyleValue('flexDirection', 'row')"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="15 8 19 12 15 16"/></svg>
+                      </button>
+                      <button
+                        :class="['vf-se-dir-btn', { 'vf-se-dir-btn--active': !isFlexRow }]"
+                        title="Vertical (column)"
+                        @click="setStyleValue('flexDirection', 'column')"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="8 15 12 19 16 15"/></svg>
+                      </button>
+                      <button
+                        :class="['vf-se-dir-btn', { 'vf-se-dir-btn--active': getStyleValue('flexWrap','nowrap') === 'wrap' }]"
+                        title="Wrap"
+                        @click="setStyleValue('flexWrap', getStyleValue('flexWrap','nowrap') === 'wrap' ? 'nowrap' : 'wrap')"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
                       </button>
                     </div>
-                    <div class="vf-se-spacing-cross">
-                      <div class="vf-se-spacing-cross__top">
-                        <input type="number" class="vf-se-spacing-input" :value="getSpacingNum('margin','Top')" placeholder="0" @input="setSpacing('margin','Top',($event.target as HTMLInputElement).value)" />
-                      </div>
-                      <div class="vf-se-spacing-cross__middle">
-                        <input type="number" class="vf-se-spacing-input" :value="getSpacingNum('margin','Left')" placeholder="0" @input="setSpacing('margin','Left',($event.target as HTMLInputElement).value)" />
-                        <div class="vf-se-spacing-cross__center">
-                          <span class="vf-se-spacing-cross__label">M</span>
-                        </div>
-                        <input type="number" class="vf-se-spacing-input" :value="getSpacingNum('margin','Right')" placeholder="0" @input="setSpacing('margin','Right',($event.target as HTMLInputElement).value)" />
-                      </div>
-                      <div class="vf-se-spacing-cross__bottom">
-                        <input type="number" class="vf-se-spacing-input" :value="getSpacingNum('margin','Bottom')" placeholder="0" @input="setSpacing('margin','Bottom',($event.target as HTMLInputElement).value)" />
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-
-              <!-- ═══ FOND ══════════════════════════════════════════════════════════ -->
-              <div class="vf-se-section-title">Fond</div>
-              <div class="vf-se-panel__bd">
-
-                <!-- Mode tabs -->
-                <div class="vf-se-bg-tabs">
-                  <button :class="['vf-se-bg-tab', { 'vf-se-bg-tab--active': bgMode === 'none' }]" @click="bgMode = 'none'; applyBackground()">Aucun</button>
-                  <button :class="['vf-se-bg-tab', { 'vf-se-bg-tab--active': bgMode === 'color' }]" @click="bgMode = 'color'; applyBackground()">Couleur</button>
-                  <button :class="['vf-se-bg-tab', { 'vf-se-bg-tab--active': bgMode === 'gradient' }]" @click="bgMode = 'gradient'; applyBackground()">Dégradé</button>
-                  <button :class="['vf-se-bg-tab', { 'vf-se-bg-tab--active': bgMode === 'image' }]" @click="bgMode = 'image'; applyBackground()">Image</button>
-                </div>
-
-                <!-- ── Couleur ── -->
-                <template v-if="bgMode === 'color'">
-                  <div class="vf-se-color-row" style="margin-top:8px">
-                    <input type="color" :value="getStyleValue('backgroundColor','#ffffff')" class="vf-se-color-swatch"
-                      @input="setStyleValue('backgroundColor',($event.target as HTMLInputElement).value)" />
-                    <input type="text" :value="getStyleValue('backgroundColor','')" class="vf-se-input" style="flex:1"
-                      placeholder="#ffffff ou rgba(…)" @input="setStyleValue('backgroundColor',($event.target as HTMLInputElement).value)" />
-                  </div>
-                </template>
-
-                <!-- ── Dégradé ── -->
-                <template v-else-if="bgMode === 'gradient'">
-                  <div class="vf-se-field" style="margin-top:8px">
-                    <label class="vf-se-label">Type</label>
-                    <div class="vf-se-type-row">
-                      <div class="vf-se-select-wrap" style="flex:1">
-                        <select class="vf-se-select" :value="gradType" @change="gradType = ($event.target as HTMLSelectElement).value as any; applyBackground()">
-                          <option value="linear">Linéaire</option>
-                          <option value="radial">Radial</option>
-                          <option value="conic">Conique</option>
-                        </select>
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                      </div>
-                      <div v-if="gradType !== 'radial'" class="vf-se-number-field" style="width:72px;flex-shrink:0">
-                        <input type="number" class="vf-se-number-input" :value="gradAngle"
-                          @input="gradAngle = Number(($event.target as HTMLInputElement).value); applyBackground()" />
-                        <span class="vf-se-number-unit">°</span>
-                      </div>
-                    </div>
-                  </div>
-                  <!-- Preview bar -->
-                  <div class="vf-se-grad-preview" :style="{ background: builtGradient }" />
-                  <!-- Stops -->
-                  <div class="vf-se-field">
-                    <label class="vf-se-label">Étapes</label>
-                    <div class="vf-se-grad-stops">
-                      <div v-for="(stop, i) in gradStops" :key="i" class="vf-se-grad-stop">
-                        <input type="color" :value="stop.color" class="vf-se-color-swatch vf-se-color-swatch--sm"
-                          @input="updateGradStop(i, 'color', ($event.target as HTMLInputElement).value)" />
-                        <input type="number" min="0" max="100" class="vf-se-number-input" style="width:44px"
-                          :value="stop.position" @input="updateGradStop(i, 'position', ($event.target as HTMLInputElement).value)" />
-                        <span class="vf-se-number-unit">%</span>
-                        <button v-if="gradStops.length > 2" class="vf-se-stop-remove" @click="removeGradStop(i)">
-                          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                        </button>
-                      </div>
-                      <button class="vf-se-stop-add" @click="addGradStop">
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Ajouter une étape
+                    <!-- 3×3 alignment grid -->
+                    <div class="vf-se-align-grid">
+                      <button
+                        v-for="cell in ALIGN_CELLS"
+                        :key="cell.key"
+                        :class="['vf-se-align-cell', { 'vf-se-align-cell--active': isAlignCellActive(cell) }]"
+                        :title="cell.label"
+                        @click="setAlignCell(cell)"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                          <rect x="1" y="1" width="12" height="12" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+                          <circle :cx="cell.cx" :cy="cell.cy" r="1.5" fill="currentColor"/>
+                        </svg>
                       </button>
                     </div>
                   </div>
-                </template>
-
-                <!-- ── Image ── -->
-                <template v-else-if="bgMode === 'image'">
-                  <div class="vf-se-field" style="margin-top:8px">
-                    <label class="vf-se-label">URL</label>
-                    <input type="text" class="vf-se-input" :value="bgImgUrl" placeholder="https://…"
-                      @input="bgImgUrl = ($event.target as HTMLInputElement).value; applyBackground()" />
-                  </div>
-                  <div class="vf-se-field">
-                    <label class="vf-se-label">Taille</label>
-                    <div class="vf-se-select-wrap">
-                      <select class="vf-se-select" :value="bgSize" @change="bgSize = ($event.target as HTMLSelectElement).value; applyBackground()">
-                        <option value="cover">Couvrir (cover)</option>
-                        <option value="contain">Contenir (contain)</option>
-                        <option value="auto">Auto</option>
-                        <option value="100% 100%">Étirer</option>
-                      </select>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                    </div>
-                  </div>
-                  <div class="vf-se-field">
-                    <label class="vf-se-label">Position</label>
-                    <div class="vf-se-select-wrap">
-                      <select class="vf-se-select" :value="bgPos" @change="bgPos = ($event.target as HTMLSelectElement).value; applyBackground()">
-                        <option value="center">Centre</option>
-                        <option value="top">Haut</option>
-                        <option value="bottom">Bas</option>
-                        <option value="left">Gauche</option>
-                        <option value="right">Droite</option>
-                        <option value="top left">Haut gauche</option>
-                        <option value="top right">Haut droite</option>
-                        <option value="bottom left">Bas gauche</option>
-                        <option value="bottom right">Bas droite</option>
-                      </select>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                    </div>
-                  </div>
-                  <div class="vf-se-field">
-                    <label class="vf-se-label">Répétition</label>
-                    <div class="vf-se-select-wrap">
-                      <select class="vf-se-select" :value="bgRepeat" @change="bgRepeat = ($event.target as HTMLSelectElement).value; applyBackground()">
-                        <option value="no-repeat">Non</option>
-                        <option value="repeat">Répéter</option>
-                        <option value="repeat-x">Horizontal</option>
-                        <option value="repeat-y">Vertical</option>
-                      </select>
-                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
-                    </div>
-                  </div>
-                  <!-- Overlay -->
-                  <div class="vf-se-toggle-row" style="margin-top:6px">
-                    <span class="vf-se-label">Superposition</span>
-                    <button :class="['vf-se-toggle-track', { 'vf-se-toggle-track--on': bgOverlay }]"
-                      @click="bgOverlay = !bgOverlay; applyBackground()">
-                      <span :class="['vf-se-toggle-thumb', { 'vf-se-toggle-thumb--on': bgOverlay }]"/>
+                  <!-- Distribution (space-between / space-around / space-evenly) -->
+                  <div class="vf-se-distrib-row">
+                    <button
+                      v-for="d in DISTRIB_VALUES"
+                      :key="d.value"
+                      :class="['vf-se-distrib-btn', { 'vf-se-distrib-btn--active': getStyleValue('justifyContent','') === d.value }]"
+                      :title="d.label"
+                      @click="setStyleValue('justifyContent', getStyleValue('justifyContent','') === d.value ? 'flex-start' : d.value)"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path :d="d.lines" stroke="currentColor" stroke-width="0.8" opacity="0.35"/>
+                        <rect v-for="r in d.rects" :key="r" :x="r" y="4" width="2" height="6" rx="0.5" fill="currentColor"/>
+                      </svg>
                     </button>
                   </div>
-                  <template v-if="bgOverlay">
-                    <div class="vf-se-color-row" style="margin-top:6px">
-                      <input type="color" :value="bgOverlayCol.replace(/rgba?\([^)]+\)/,'#000000')" class="vf-se-color-swatch"
-                        @input="bgOverlayCol = ($event.target as HTMLInputElement).value; applyBackground()" />
-                      <input type="text" :value="bgOverlayCol" class="vf-se-input" style="flex:1"
-                        placeholder="rgba(0,0,0,0.4)" @input="bgOverlayCol = ($event.target as HTMLInputElement).value; applyBackground()" />
+
+                  <!-- Gap field -->
+                  <div class="vf-se-gap-row">
+                    <div class="vf-se-dim-field" style="flex:1">
+                      <span class="vf-se-dim-lbl" style="width:auto;font-size:9px">Gap</span>
+                      <input type="text" class="vf-se-dim-input" :value="getStyleValue('gap','')" placeholder="0" @input="setStyleValue('gap',($event.target as HTMLInputElement).value)" />
                     </div>
-                  </template>
+                  </div>
                 </template>
 
-                <!-- Opacité + Overflow (always) -->
-                <div class="vf-se-field" style="margin-top:10px">
-                  <label class="vf-se-label">Opacité</label>
+                <!-- Padding -->
+                <div class="vf-se-spacing-box">
+                  <div class="vf-se-spacing-box__hd">
+                    <span class="vf-se-spacing-box__title">Padding</span>
+                    <div class="vf-se-spacing-modes">
+                      <button :class="['vf-se-spacing-mode', { active: paddingMode==='all' }]" title="Tout lier" @click="paddingMode='all'">
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="3.5" y="3.5" width="7" height="7" rx="0.5" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
+                      </button>
+                      <button :class="['vf-se-spacing-mode', { active: paddingMode==='axial' }]" title="Inline / Block" @click="paddingMode='axial'">
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>
+                      </button>
+                      <button :class="['vf-se-spacing-mode', { active: paddingMode==='individual' }]" title="Individuel" @click="paddingMode='individual'">
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><line x1="3" y1="1" x2="11" y2="1" stroke="currentColor" stroke-width="1.2"/><line x1="13" y1="3" x2="13" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="11" y1="13" x2="3" y2="13" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="11" x2="1" y2="3" stroke="currentColor" stroke-width="1.2"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <!-- All: single input -->
+                  <div v-if="paddingMode==='all'" class="vf-se-dim-row">
+                    <div class="vf-se-dim-field" style="flex:1">
+                      <svg width="10" height="10" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;color:#9ca3af"><rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+                      <input type="text" class="vf-se-dim-input" :value="getSpacingVal('padding','Top')" placeholder="0" @change="setSpacingAll('padding',($event.target as HTMLInputElement).value)" />
+                    </div>
+                  </div>
+                  <!-- Axial: H + V -->
+                  <div v-else-if="paddingMode==='axial'" class="vf-se-dim-row">
+                    <div class="vf-se-dim-field" style="flex:1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:#9ca3af"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="15 8 19 12 15 16"/><polyline points="9 8 5 12 9 16"/></svg>
+                      <input type="text" class="vf-se-dim-input" :value="getSpacingVal('padding','Left')" placeholder="0" @change="setSpacingInline('padding',($event.target as HTMLInputElement).value)" />
+                    </div>
+                    <div class="vf-se-dim-field" style="flex:1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:#9ca3af"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="8 15 12 19 16 15"/><polyline points="8 9 12 5 16 9"/></svg>
+                      <input type="text" class="vf-se-dim-input" :value="getSpacingVal('padding','Top')" placeholder="0" @change="setSpacingBlock('padding',($event.target as HTMLInputElement).value)" />
+                    </div>
+                  </div>
+                  <!-- Individual: cross -->
+                  <div v-else class="vf-se-spacing-cross">
+                    <div class="vf-se-spacing-cross__top">
+                      <input type="text" class="vf-se-spacing-input" :value="getSpacingVal('padding','Top')" placeholder="0" @change="setSpacing('padding','Top',($event.target as HTMLInputElement).value)" />
+                    </div>
+                    <div class="vf-se-spacing-cross__middle">
+                      <input type="text" class="vf-se-spacing-input" :value="getSpacingVal('padding','Left')" placeholder="0" @change="setSpacing('padding','Left',($event.target as HTMLInputElement).value)" />
+                      <div class="vf-se-spacing-cross__center"><span class="vf-se-spacing-cross__label">P</span></div>
+                      <input type="text" class="vf-se-spacing-input" :value="getSpacingVal('padding','Right')" placeholder="0" @change="setSpacing('padding','Right',($event.target as HTMLInputElement).value)" />
+                    </div>
+                    <div class="vf-se-spacing-cross__bottom">
+                      <input type="text" class="vf-se-spacing-input" :value="getSpacingVal('padding','Bottom')" placeholder="0" @change="setSpacing('padding','Bottom',($event.target as HTMLInputElement).value)" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Margin -->
+                <div class="vf-se-spacing-box">
+                  <div class="vf-se-spacing-box__hd">
+                    <span class="vf-se-spacing-box__title">Margin</span>
+                    <div class="vf-se-spacing-modes">
+                      <button :class="['vf-se-spacing-mode', { active: marginMode==='all' }]" title="Tout lier" @click="marginMode='all'">
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.2"/><rect x="3.5" y="3.5" width="7" height="7" rx="0.5" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
+                      </button>
+                      <button :class="['vf-se-spacing-mode', { active: marginMode==='axial' }]" title="Inline / Block" @click="marginMode='axial'">
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><line x1="1" y1="7" x2="13" y2="7" stroke="currentColor" stroke-width="1.2"/><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>
+                      </button>
+                      <button :class="['vf-se-spacing-mode', { active: marginMode==='individual' }]" title="Individuel" @click="marginMode='individual'">
+                        <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><line x1="3" y1="1" x2="11" y2="1" stroke="currentColor" stroke-width="1.2"/><line x1="13" y1="3" x2="13" y2="11" stroke="currentColor" stroke-width="1.2"/><line x1="11" y1="13" x2="3" y2="13" stroke="currentColor" stroke-width="1.2"/><line x1="1" y1="11" x2="1" y2="3" stroke="currentColor" stroke-width="1.2"/></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div v-if="marginMode==='all'" class="vf-se-dim-row">
+                    <div class="vf-se-dim-field" style="flex:1">
+                      <svg width="10" height="10" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;color:#9ca3af"><rect x="1" y="1" width="12" height="12" rx="1" stroke="currentColor" stroke-width="1.2"/></svg>
+                      <input type="text" class="vf-se-dim-input" :value="getSpacingVal('margin','Top')" placeholder="0" @change="setSpacingAll('margin',($event.target as HTMLInputElement).value)" />
+                    </div>
+                  </div>
+                  <div v-else-if="marginMode==='axial'" class="vf-se-dim-row">
+                    <div class="vf-se-dim-field" style="flex:1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:#9ca3af"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="15 8 19 12 15 16"/><polyline points="9 8 5 12 9 16"/></svg>
+                      <input type="text" class="vf-se-dim-input" :value="getSpacingVal('margin','Left')" placeholder="0" @change="setSpacingInline('margin',($event.target as HTMLInputElement).value)" />
+                    </div>
+                    <div class="vf-se-dim-field" style="flex:1">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:#9ca3af"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="8 15 12 19 16 15"/><polyline points="8 9 12 5 16 9"/></svg>
+                      <input type="text" class="vf-se-dim-input" :value="getSpacingVal('margin','Top')" placeholder="0" @change="setSpacingBlock('margin',($event.target as HTMLInputElement).value)" />
+                    </div>
+                  </div>
+                  <div v-else class="vf-se-spacing-cross">
+                    <div class="vf-se-spacing-cross__top">
+                      <input type="text" class="vf-se-spacing-input" :value="getSpacingVal('margin','Top')" placeholder="0" @change="setSpacing('margin','Top',($event.target as HTMLInputElement).value)" />
+                    </div>
+                    <div class="vf-se-spacing-cross__middle">
+                      <input type="text" class="vf-se-spacing-input" :value="getSpacingVal('margin','Left')" placeholder="0" @change="setSpacing('margin','Left',($event.target as HTMLInputElement).value)" />
+                      <div class="vf-se-spacing-cross__center"><span class="vf-se-spacing-cross__label">M</span></div>
+                      <input type="text" class="vf-se-spacing-input" :value="getSpacingVal('margin','Right')" placeholder="0" @change="setSpacing('margin','Right',($event.target as HTMLInputElement).value)" />
+                    </div>
+                    <div class="vf-se-spacing-cross__bottom">
+                      <input type="text" class="vf-se-spacing-input" :value="getSpacingVal('margin','Bottom')" placeholder="0" @change="setSpacing('margin','Bottom',($event.target as HTMLInputElement).value)" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- ─── FOND ───────────────────────────────────────────────────────────── -->
+              <div class="vf-se-sec-hd-wrap">
+                <button class="vf-se-sec-hd" @click="panelOpen.fill = !panelOpen.fill">
+                  <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.fill}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span class="vf-se-sec-hd__label">Fill</span>
+                </button>
+                <button class="vf-se-sec-hd-add" title="Ajouter un fond" @click="bgMode='color';applyBackground();panelOpen.fill=true">+</button>
+              </div>
+              <div v-if="panelOpen.fill" class="vf-se-sec-body">
+
+                <!-- Fill row (when fill is set) -->
+                <div v-if="bgMode !== 'none'" class="vf-se-fill-row">
+                  <div class="vf-se-fill-swatch-wrap">
+                    <button
+                      class="vf-se-fill-swatch"
+                      :style="{background: bgMode==='color' ? getStyleValue('backgroundColor','#fff') : (bgMode==='gradient' ? builtGradient : 'transparent')}"
+                      @click.stop="colorPopupKey = colorPopupKey==='fill' ? null : 'fill'"
+                    />
+                    <div v-if="colorPopupKey === 'fill'" class="vf-se-color-popup" @click.stop>
+                      <!-- Mode tabs inside popup -->
+                      <div class="vf-se-popup-tabs">
+                        <button :class="['vf-se-popup-tab',{active:bgMode==='color'}]" @click="bgMode='color';applyBackground()">Couleur</button>
+                        <button :class="['vf-se-popup-tab',{active:bgMode==='gradient'}]" @click="bgMode='gradient';applyBackground()">Dégradé</button>
+                        <button :class="['vf-se-popup-tab',{active:bgMode==='image'}]" @click="bgMode='image';applyBackground()">Image</button>
+                      </div>
+                      <!-- Color mode -->
+                      <template v-if="bgMode==='color'">
+                        <input type="color" class="vf-se-color-popup__picker" :value="getStyleValue('backgroundColor','#ffffff')" @input="setStyleValue('backgroundColor',($event.target as HTMLInputElement).value)" />
+                        <div class="vf-se-color-popup__row">
+                          <input type="text" class="vf-se-color-popup__hex" :value="getStyleValue('backgroundColor','')" placeholder="#ffffff" @input="setStyleValue('backgroundColor',($event.target as HTMLInputElement).value)" />
+                        </div>
+                      </template>
+                      <!-- Gradient mode -->
+                      <template v-else-if="bgMode==='gradient'">
+                        <div class="vf-se-field" style="margin-top:4px">
+                          <div class="vf-se-type-row">
+                            <div class="vf-se-select-wrap" style="flex:1">
+                              <select class="vf-se-select" :value="gradType" @change="gradType = ($event.target as HTMLSelectElement).value as any; applyBackground()">
+                                <option value="linear">Linéaire</option>
+                                <option value="radial">Radial</option>
+                                <option value="conic">Conique</option>
+                              </select>
+                              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                            </div>
+                            <div v-if="gradType !== 'radial'" class="vf-se-number-field" style="width:60px;flex-shrink:0">
+                              <input type="number" class="vf-se-number-input" :value="gradAngle" @input="gradAngle = Number(($event.target as HTMLInputElement).value); applyBackground()" />
+                              <span class="vf-se-number-unit">°</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="vf-se-grad-preview" :style="{ background: builtGradient }" />
+                        <div class="vf-se-grad-stops">
+                          <div v-for="(stop, i) in gradStops" :key="i" class="vf-se-grad-stop">
+                            <input type="color" :value="stop.color" class="vf-se-color-swatch vf-se-color-swatch--sm" @input="updateGradStop(i, 'color', ($event.target as HTMLInputElement).value)" />
+                            <input type="number" min="0" max="100" class="vf-se-number-input" style="width:44px" :value="stop.position" @input="updateGradStop(i, 'position', ($event.target as HTMLInputElement).value)" />
+                            <span class="vf-se-number-unit">%</span>
+                            <button v-if="gradStops.length > 2" class="vf-se-stop-remove" @click="removeGradStop(i)">
+                              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </button>
+                          </div>
+                          <button class="vf-se-stop-add" @click="addGradStop">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                            Ajouter une étape
+                          </button>
+                        </div>
+                      </template>
+                      <!-- Image mode -->
+                      <template v-else-if="bgMode==='image'">
+                        <div class="vf-se-field" style="margin-top:4px">
+                          <label class="vf-se-label">URL</label>
+                          <input type="text" class="vf-se-input" :value="bgImgUrl" placeholder="https://…" @input="bgImgUrl = ($event.target as HTMLInputElement).value; applyBackground()" />
+                        </div>
+                        <div class="vf-se-field">
+                          <label class="vf-se-label">Taille</label>
+                          <div class="vf-se-select-wrap">
+                            <select class="vf-se-select" :value="bgSize" @change="bgSize = ($event.target as HTMLSelectElement).value; applyBackground()">
+                              <option value="cover">Couvrir (cover)</option>
+                              <option value="contain">Contenir (contain)</option>
+                              <option value="auto">Auto</option>
+                              <option value="100% 100%">Étirer</option>
+                            </select>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                          </div>
+                        </div>
+                        <div class="vf-se-field">
+                          <label class="vf-se-label">Position</label>
+                          <div class="vf-se-select-wrap">
+                            <select class="vf-se-select" :value="bgPos" @change="bgPos = ($event.target as HTMLSelectElement).value; applyBackground()">
+                              <option value="center">Centre</option>
+                              <option value="top">Haut</option>
+                              <option value="bottom">Bas</option>
+                              <option value="left">Gauche</option>
+                              <option value="right">Droite</option>
+                              <option value="top left">Haut gauche</option>
+                              <option value="top right">Haut droite</option>
+                              <option value="bottom left">Bas gauche</option>
+                              <option value="bottom right">Bas droite</option>
+                            </select>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                          </div>
+                        </div>
+                        <div class="vf-se-field">
+                          <label class="vf-se-label">Répétition</label>
+                          <div class="vf-se-select-wrap">
+                            <select class="vf-se-select" :value="bgRepeat" @change="bgRepeat = ($event.target as HTMLSelectElement).value; applyBackground()">
+                              <option value="no-repeat">Non</option>
+                              <option value="repeat">Répéter</option>
+                              <option value="repeat-x">Horizontal</option>
+                              <option value="repeat-y">Vertical</option>
+                            </select>
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="vf-se-select-arrow"><polyline points="6 9 12 15 18 9"/></svg>
+                          </div>
+                        </div>
+                        <div class="vf-se-toggle-row" style="margin-top:4px">
+                          <span class="vf-se-label">Superposition</span>
+                          <button :class="['vf-se-toggle-track', { 'vf-se-toggle-track--on': bgOverlay }]" @click="bgOverlay = !bgOverlay; applyBackground()">
+                            <span :class="['vf-se-toggle-thumb', { 'vf-se-toggle-thumb--on': bgOverlay }]"/>
+                          </button>
+                        </div>
+                        <template v-if="bgOverlay">
+                          <div class="vf-se-color-row" style="margin-top:4px">
+                            <input type="color" :value="bgOverlayCol.replace(/rgba?\([^)]+\)/,'#000000')" class="vf-se-color-swatch" @input="bgOverlayCol = ($event.target as HTMLInputElement).value; applyBackground()" />
+                            <input type="text" :value="bgOverlayCol" class="vf-se-input" style="flex:1" placeholder="rgba(0,0,0,0.4)" @input="bgOverlayCol = ($event.target as HTMLInputElement).value; applyBackground()" />
+                          </div>
+                        </template>
+                      </template>
+                    </div>
+                  </div>
+                  <!-- Fill type label / hex -->
+                  <span class="vf-se-fill-value">{{ bgMode === 'color' ? getStyleValue('backgroundColor','—') : bgMode }}</span>
+                  <!-- Opacity -->
+                  <div class="vf-se-fill-opacity-wrap">
+                    <input type="number" min="0" max="100" class="vf-se-fill-opacity-input" :value="Math.round(parseFloat(getStyleValue('opacity','1'))*100)" @input="setStyleValue('opacity', String(Number(($event.target as HTMLInputElement).value)/100))" />
+                    <span>%</span>
+                  </div>
+                  <!-- Remove fill -->
+                  <button class="vf-se-fill-del" title="Supprimer" @click="bgMode='none';applyBackground()">
+                    <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+                <!-- Empty fill (no fill) -->
+                <div v-else class="vf-se-fill-empty">
+                  <button class="vf-se-fill-add-btn" @click="bgMode='color';applyBackground()">+ Ajouter un fond</button>
+                </div>
+
+                <!-- Opacity row -->
+                <div class="vf-se-sec-body__row">
+                  <span class="vf-se-label">Opacité</span>
                   <div class="vf-se-opacity-row">
                     <input type="range" min="0" max="100" class="vf-se-slider" :value="Math.round(parseFloat(getStyleValue('opacity','1'))*100)" @input="setStyleValue('opacity', String(Number(($event.target as HTMLInputElement).value)/100))" />
                     <div class="vf-se-number-field" style="width:54px;flex-shrink:0">
@@ -696,9 +761,10 @@
                     </div>
                   </div>
                 </div>
-                <div class="vf-se-field">
-                  <label class="vf-se-label">Overflow</label>
-                  <div class="vf-se-select-wrap">
+                <!-- Overflow -->
+                <div class="vf-se-sec-body__row">
+                  <span class="vf-se-label">Overflow</span>
+                  <div class="vf-se-select-wrap" style="flex:1">
                     <select class="vf-se-select" :value="getStyleValue('overflow','')" @change="setStyleValue('overflow',($event.target as HTMLSelectElement).value)">
                       <option value="">— hérité —</option>
                       <option value="visible">visible</option>
@@ -712,9 +778,59 @@
 
               </div>
 
-              <!-- ═══ EFFETS ═══════════════════════════════════════════════════════════ -->
-              <div class="vf-se-section-title">Effets</div>
-              <div class="vf-se-panel__bd">
+              <!-- ─── EFFETS ─────────────────────────────────────────────────────────── -->
+              <button class="vf-se-sec-hd" @click="panelOpen.effects = !panelOpen.effects">
+                <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.effects}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                <span class="vf-se-sec-hd__label">Effets</span>
+              </button>
+              <div v-if="panelOpen.effects" class="vf-se-sec-body">
+
+                <!-- Box shadow -->
+                <div class="vf-se-effect-row">
+                  <button :class="['vf-se-effect-toggle', { 'vf-se-effect-toggle--on': shadowEnabled }]"
+                    @click="shadowEnabled = !shadowEnabled; applyBoxShadow()">
+                    <span class="vf-se-effect-toggle__dot"/>
+                  </button>
+                  <span class="vf-se-effect-label">Ombre portée</span>
+                  <template v-if="shadowEnabled">
+                    <div class="vf-se-fill-swatch-wrap">
+                      <button class="vf-se-fill-swatch" :style="{background: shadowColor}" @click.stop="colorPopupKey = colorPopupKey==='shadow'?null:'shadow'"/>
+                      <div v-if="colorPopupKey==='shadow'" class="vf-se-color-popup" @click.stop>
+                        <input type="color" class="vf-se-color-popup__picker" :value="shadowColor.startsWith('rgba')?'#000000':shadowColor" @input="shadowColor = ($event.target as HTMLInputElement).value; applyBoxShadow()" />
+                        <div class="vf-se-color-popup__row">
+                          <input type="text" class="vf-se-color-popup__hex" v-model="shadowColor" @input="applyBoxShadow()" />
+                        </div>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+                <template v-if="shadowEnabled">
+                  <div class="vf-se-shadow-fields">
+                    <div class="vf-se-shadow-field">
+                      <span class="vf-se-shadow-lbl">X</span>
+                      <input type="number" class="vf-se-number-input" style="width:100%" :value="shadowX" @input="shadowX=Number(($event.target as HTMLInputElement).value);applyBoxShadow()" />
+                    </div>
+                    <div class="vf-se-shadow-field">
+                      <span class="vf-se-shadow-lbl">Y</span>
+                      <input type="number" class="vf-se-number-input" style="width:100%" :value="shadowY" @input="shadowY=Number(($event.target as HTMLInputElement).value);applyBoxShadow()" />
+                    </div>
+                    <div class="vf-se-shadow-field">
+                      <span class="vf-se-shadow-lbl">Flou</span>
+                      <input type="number" min="0" class="vf-se-number-input" style="width:100%" :value="shadowBlur" @input="shadowBlur=Number(($event.target as HTMLInputElement).value);applyBoxShadow()" />
+                    </div>
+                    <div class="vf-se-shadow-field">
+                      <span class="vf-se-shadow-lbl">Étendue</span>
+                      <input type="number" class="vf-se-number-input" style="width:100%" :value="shadowSpread" @input="shadowSpread=Number(($event.target as HTMLInputElement).value);applyBoxShadow()" />
+                    </div>
+                  </div>
+                  <label class="vf-se-toggle" style="margin-bottom:6px">
+                    <input type="checkbox" :checked="shadowInner" @change="shadowInner=($event.target as HTMLInputElement).checked;applyBoxShadow()" />
+                    <span class="vf-se-toggle-track"><span class="vf-se-toggle-thumb"/></span>
+                    <span style="font-size:11px;color:#6b7280">Intérieure</span>
+                  </label>
+                </template>
+
+                <div class="vf-se-fx-divider"/>
 
                 <!-- Backdrop filter toggle -->
                 <div class="vf-se-toggle-row">
@@ -761,9 +877,12 @@
 
               </div>
 
-              <!-- ═══ BORDURE ═════════════════════════════════════════════════════════ -->
-              <div class="vf-se-section-title">Bordure</div>
-              <div class="vf-se-panel__bd">
+              <!-- ─── BORDURE ────────────────────────────────────────────────────────── -->
+              <button class="vf-se-sec-hd" @click="panelOpen.border = !panelOpen.border">
+                <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.border}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                <span class="vf-se-sec-hd__label">Bordure</span>
+              </button>
+              <div v-if="panelOpen.border" class="vf-se-sec-body">
 
                   <!-- Border radius -->
                   <div class="vf-se-spacing-label-row">
@@ -817,8 +936,18 @@
                     </div>
                   </div>
                   <div class="vf-se-color-row">
-                    <input type="color" :value="getStyleValue('borderColor','#000000')" class="vf-se-color-swatch" @input="setStyleValue('borderColor',($event.target as HTMLInputElement).value)" />
-                    <input type="text" :value="getStyleValue('borderColor','')" class="vf-se-input" style="flex:1" placeholder="#000000" @input="setStyleValue('borderColor',($event.target as HTMLInputElement).value)" />
+                    <div class="vf-se-fill-swatch-wrap">
+                      <button class="vf-se-fill-swatch vf-se-fill-swatch--sm"
+                        :style="{background: getStyleValue('borderColor','#000')}"
+                        @click.stop="colorPopupKey = colorPopupKey==='border' ? null : 'border'" />
+                      <div v-if="colorPopupKey === 'border'" class="vf-se-color-popup" @click.stop>
+                        <input type="color" class="vf-se-color-popup__picker" :value="getStyleValue('borderColor','#000000')" @input="setStyleValue('borderColor',($event.target as HTMLInputElement).value)" />
+                        <div class="vf-se-color-popup__row">
+                          <input type="text" class="vf-se-color-popup__hex" :value="getStyleValue('borderColor','')" placeholder="#000000" @input="setStyleValue('borderColor',($event.target as HTMLInputElement).value)" />
+                        </div>
+                      </div>
+                    </div>
+                    <span style="font-size:11px;color:#374151;flex:1">{{ getStyleValue('borderColor','') || '#000000' }}</span>
                   </div>
 
                 </div>
@@ -826,7 +955,7 @@
             </div>
 
             <!-- Attrs tab -->
-            <div v-else-if="rightTab === 'attrs'" class="vf-se-right__content">
+            <div v-else-if="rightTab === 'attrs'" class="vf-se-right__content vf-se-right__content--padded">
               <div class="vf-se-attrs-info">
                 Attributs HTML ajoutés directement sur l'élément rendu (SEO, accessibilité).
               </div>
@@ -884,11 +1013,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, reactive } from 'vue'
 import type { SectionInstance, SectionTemplate, BlockDefinition, EditableProp, DesignSystemAdapter } from '../../types'
 import { VfBlockTree } from '../BlockTree'
 import { VfBlockRenderer } from '../BlockRenderer'
 import { ICON_PATHS } from '../BlockRenderer/icon-paths'
+import { resolveEditableProps } from '../../utils/block-props.util'
+import { GENERIC_COMPONENT_LABELS } from '../../consts'
 
 // ─── Props / Emits ────────────────────────────────────────────────────────────
 
@@ -922,6 +1053,20 @@ const rightTab = ref<'props' | 'attrs'>('props')
 const expandedIds = ref<Set<string>>(new Set())
 const componentSearch = ref('')
 const sectionSettingsOpen = ref(false)
+
+// Panel sections open/close state (Figma-style collapsibles)
+const panelOpen = reactive({
+  props: true,
+  image: true,
+  icon: true,
+  typo: true,
+  layout: true,
+  spacing: false,
+  fill: false,
+  effects: false,
+  border: false,
+})
+
 const newAttrKey = ref('')
 const newAttrVal = ref('')
 
@@ -1095,13 +1240,16 @@ const selectedBlockLabel = computed(() =>
   selectedBlock.value?.meta?.label ?? selectedBlock.value?.type ?? ''
 )
 
-const editableProps = computed<EditableProp[]>(() =>
-  selectedBlock.value?.meta?.editableProps ?? []
-)
+const editableProps = computed<EditableProp[]>(() => {
+  if (!selectedBlock.value) return []
+  const resolved = resolveEditableProps(selectedBlock.value.type, selectedBlock.value.meta?.editableProps)
+  // Auto-inject text content prop if the block has text and no 'text' key already
+  if (selectedBlock.value.text !== undefined && !resolved.some((p) => p.key === 'text')) {
+    return [{ key: 'text', label: 'Contenu', type: 'textarea', default: '' }, ...resolved]
+  }
+  return resolved
+})
 
-const hasTextProp = computed(() =>
-  editableProps.value.some((p) => p.key === 'text')
-)
 
 function getTextValue(): string {
   if (!selectedBlockId.value) return ''
@@ -1163,8 +1311,8 @@ const isTextBlock = computed(() =>
     selectedBlock.value.type === 'vf-heading')
 )
 
-const isImageBlock = computed(() => selectedBlock.value?.type === 'image')
-const isIconBlock  = computed(() => selectedBlock.value?.type === 'icon')
+const isImageBlock = computed(() => selectedBlock.value?.type === 'vf-img')
+const isIconBlock  = computed(() => selectedBlock.value?.type === 'vf-icon')
 
 // ─── Image helpers ────────────────────────────────────────────────────────────
 
@@ -1195,11 +1343,90 @@ const filteredIconNames = computed(() => {
   return Object.keys(ICON_PATHS).filter((name) => !q || name.includes(q))
 })
 
+// ─── Computed DOM styles (fallback — reads actual values from CSS classes) ────
+
+const computedBlockStyles = ref<Record<string, string>>({})
+// Declared CSS styles read from stylesheets — preserves original units (rem/em/%)
+const declaredBlockStyles = ref<Record<string, string>>({})
+
+// Properties we care about snapshotting from getComputedStyle
+// Dimensions (width/height) are intentionally excluded: getComputedStyle always
+// returns a pixel value even for auto elements, which would be misleading.
+const COMPUTED_PROPS = [
+  'paddingTop','paddingRight','paddingBottom','paddingLeft',
+  'marginTop','marginRight','marginBottom','marginLeft',
+  'display','flexDirection','flexWrap','justifyContent','alignItems','gap','columnGap','rowGap',
+  'fontSize','fontWeight','fontFamily','lineHeight','letterSpacing','color','textAlign',
+  'backgroundColor',
+  'borderRadius','borderTopLeftRadius','borderTopRightRadius','borderBottomLeftRadius','borderBottomRightRadius',
+  'borderWidth','borderStyle','borderColor',
+  'opacity','boxShadow','backdropFilter',
+] as const
+
+// Values to ignore — browser defaults that aren't user-set
+const COMPUTED_IGNORE = new Set(['none','normal','auto','0px','0','rgba(0, 0, 0, 0)',''])
+
+function cssPropToCamel (hyphen: string): string {
+  return hyphen.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())
+}
+
+/** Read all matching CSS rules for `el` from loaded stylesheets (preserves rem/em/%). */
+function snapshotDeclaredStyles (el: HTMLElement) {
+  const snap: Record<string, string> = {}
+  try {
+    for (const sheet of Array.from(document.styleSheets)) {
+      let rules: CSSRuleList
+      try { rules = sheet.cssRules } catch { continue }
+      for (const rule of Array.from(rules)) {
+        if (!(rule instanceof CSSStyleRule)) continue
+        try { if (!el.matches(rule.selectorText)) continue } catch { continue }
+        const style = rule.style
+        for (let i = 0; i < style.length; i++) {
+          const hyphenProp = style[i]
+          const val = style.getPropertyValue(hyphenProp).trim()
+          if (val) snap[cssPropToCamel(hyphenProp)] = val
+        }
+      }
+    }
+  } catch { /* cross-origin sheets */ }
+  declaredBlockStyles.value = snap
+}
+
+function snapshotComputedStyles() {
+  computedBlockStyles.value = {}
+  declaredBlockStyles.value = {}
+  if (!selectedBlockId.value) return
+  nextTick(() => {
+    const el = document.querySelector(`[data-vf-block-id="${selectedBlockId.value}"]`) as HTMLElement | null
+    if (!el) return
+    // 1. Declared CSS rules (original units)
+    snapshotDeclaredStyles(el)
+    // 2. Computed styles (px fallback for non-spacing props)
+    const cs = window.getComputedStyle(el)
+    const snap: Record<string, string> = {}
+    for (const p of COMPUTED_PROPS) {
+      const v = cs[p as keyof CSSStyleDeclaration] as string
+      if (v && !COMPUTED_IGNORE.has(v)) snap[p] = v
+    }
+    computedBlockStyles.value = snap
+  })
+}
+
 function getStyleValue (prop: string, defaultValue = ''): string {
   if (!selectedBlockId.value) return defaultValue
-  return workingStyleOverrides.value[selectedBlockId.value]?.[prop]
-    ?? selectedBlock.value?.style?.[prop]
-    ?? defaultValue
+  // 1. Explicit user override
+  const override = workingStyleOverrides.value[selectedBlockId.value]?.[prop]
+  if (override !== undefined && override !== '') return override
+  // 2. Block template inline style
+  const tpl = selectedBlock.value?.style?.[prop]
+  if (tpl !== undefined && tpl !== '') return tpl
+  // 3. Declared CSS rules (original units — rem/em/% preserved)
+  const declared = declaredBlockStyles.value[prop]
+  if (declared !== undefined && declared !== '') return declared
+  // 4. Computed style from DOM (px values for non-spacing props)
+  const computed = computedBlockStyles.value[prop]
+  if (computed !== undefined && computed !== '') return computed
+  return defaultValue
 }
 
 function setStyleValue (prop: string, value: string) {
@@ -1235,11 +1462,37 @@ function parsePx (val: string): string {
   return isNaN(n) ? '' : String(n)
 }
 
-// ─── Linked spacing state ─────────────────────────────────────────────────────
+// ─── Spacing modes ────────────────────────────────────────────────────────────
 
-const paddingLinked = ref(false)
-const marginLinked = ref(false)
+type SpacingMode = 'all' | 'axial' | 'individual'
+const paddingMode  = ref<SpacingMode>('individual')
+const marginMode   = ref<SpacingMode>('individual')
 const radiusLinked = ref(true)
+
+/** Normalize a CSS length: bare number → append 'px'; otherwise keep as-is */
+function normalizeCssLen(val: string): string {
+  const t = val.trim()
+  return /^-?\d+(\.\d+)?$/.test(t) ? t + 'px' : t
+}
+
+function setSpacingAll(type: 'padding' | 'margin', val: string) {
+  const sides: ('Top' | 'Right' | 'Bottom' | 'Left')[] = ['Top', 'Right', 'Bottom', 'Left']
+  setStyleValue(type, '')
+  const css = normalizeCssLen(val)
+  sides.forEach(s => setStyleValue(type + s, css))
+}
+
+function setSpacingInline(type: 'padding' | 'margin', val: string) {
+  const css = normalizeCssLen(val)
+  setStyleValue(type + 'Left', css)
+  setStyleValue(type + 'Right', css)
+}
+
+function setSpacingBlock(type: 'padding' | 'margin', val: string) {
+  const css = normalizeCssLen(val)
+  setStyleValue(type + 'Top', css)
+  setStyleValue(type + 'Bottom', css)
+}
 
 // ─── Style helpers ────────────────────────────────────────────────────────────
 
@@ -1270,19 +1523,38 @@ function parseShorthand (shorthand: string, side: 'Top' | 'Right' | 'Bottom' | '
   return parts[idx] ?? parts[0]
 }
 
-/** Get a spacing side value, resolving from individual property OR shorthand */
-function getSpacingNum (type: 'padding' | 'margin', side: 'Top' | 'Right' | 'Bottom' | 'Left'): number {
-  const individual = getStyleValue(`${type}${side}`, '')
-  if (individual) return parseFloat(individual) || 0
-  const shorthand = getStyleValue(type, '')
-  if (!shorthand) return 0
-  return parseFloat(parseShorthand(shorthand, side)) || 0
+/** Get a spacing side value as a CSS string (e.g. "1rem", "16px").
+ *  Priority: user override → template style → declared CSS shorthand/individual → computed (px). */
+function getSpacingVal (type: 'padding' | 'margin', side: 'Top' | 'Right' | 'Bottom' | 'Left'): string {
+  const id = selectedBlockId.value
+  if (!id) return ''
+  // 1. User override — individual side
+  const ovIndiv = workingStyleOverrides.value[id]?.[`${type}${side}`]
+  if (ovIndiv !== undefined && ovIndiv !== '') return ovIndiv
+  // 2. User override — shorthand
+  const ovShort = workingStyleOverrides.value[id]?.[type]
+  if (ovShort !== undefined && ovShort !== '') return parseShorthand(ovShort, side)
+  // 3. Template inline style — individual side
+  const tplIndiv = selectedBlock.value?.style?.[`${type}${side}`]
+  if (tplIndiv !== undefined && tplIndiv !== '') return tplIndiv
+  // 4. Template inline style — shorthand
+  const tplShort = selectedBlock.value?.style?.[type]
+  if (tplShort !== undefined && tplShort !== '') return parseShorthand(tplShort, side)
+  // 5. Declared CSS shorthand (preserves rem/em — e.g. DaisyUI `padding: 1rem`)
+  const declShort = declaredBlockStyles.value[type]
+  if (declShort) return parseShorthand(declShort, side)
+  // 6. Declared CSS individual side
+  const declIndiv = declaredBlockStyles.value[`${type}${side}`]
+  if (declIndiv && !COMPUTED_IGNORE.has(declIndiv)) return declIndiv
+  // 7. Computed (px values — last resort)
+  const comp = computedBlockStyles.value[`${type}${side}`]
+  if (comp && !COMPUTED_IGNORE.has(comp)) return comp
+  return ''
 }
 
-/** Set padding or margin for a given side, respecting linked mode.
- *  Automatically expands any existing shorthand into individual values first. */
+/** Set padding or margin for a given side.
+ *  Bare numbers are treated as px. Automatically expands shorthands. */
 function setSpacing (type: 'padding' | 'margin', side: string, val: string) {
-  // Expand shorthand → individual values before writing
   const shorthand = getStyleValue(type, '')
   if (shorthand) {
     const allSides: ('Top' | 'Right' | 'Bottom' | 'Left')[] = ['Top', 'Right', 'Bottom', 'Left']
@@ -1293,14 +1565,7 @@ function setSpacing (type: 'padding' | 'margin', side: string, val: string) {
     })
     setStyleValue(type, '')
   }
-
-  const linked = type === 'padding' ? paddingLinked.value : marginLinked.value
-  const sides = ['Top', 'Right', 'Bottom', 'Left']
-  if (linked) {
-    sides.forEach(s => setStylePx(type + s, val))
-  } else {
-    setStylePx(type + side, val)
-  }
+  setStyleValue(type + side, normalizeCssLen(val))
 }
 
 /** Set all border-radius corners to same value */
@@ -1466,7 +1731,17 @@ function initBgState () {
   }
 }
 
-watch(selectedBlockId, () => nextTick(initBgState))
+watch(selectedBlockId, () => {
+  paddingMode.value = 'individual'
+  marginMode.value  = 'individual'
+  computedBlockStyles.value = {}
+  declaredBlockStyles.value = {}
+  nextTick(() => {
+    snapshotComputedStyles()
+    initBgState()
+    initBoxShadow()
+  })
+})
 
 // ─── Typography constants ─────────────────────────────────────────────────────
 
@@ -1576,23 +1851,23 @@ const BUILTIN_COMPONENTS: Array<{
     ],
   },
   {
-    type: 'image',
+    type: 'vf-img',
     label: 'Image',
     icon: '🖼',
     defaultProps: { src: '', alt: '' },
     defaultStyle: { width: '100%', height: 'auto', objectFit: 'cover' },
   },
   {
-    type: 'icon',
+    type: 'vf-icon',
     label: 'Icône',
     icon: '★',
     defaultProps: { name: 'star', size: 32, color: 'currentColor' },
   },
 ]
 
-function humanizeType(type: string): string {
-  return type.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
-}
+const humanizeType = (type: string): string =>
+  GENERIC_COMPONENT_LABELS[type as keyof typeof GENERIC_COMPONENT_LABELS]
+    ?? type.replace(/^vf-/, '').replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
 
 const availableComponents = computed(() => {
   const map = props.adapter.componentMap
@@ -1665,6 +1940,111 @@ function onSave() {
     sectionStyles: JSON.parse(JSON.stringify(workingSectionStyles.value)),
     wrapperStyles: JSON.parse(JSON.stringify(workingWrapperStyles.value)),
   })
+}
+
+// ─── Color popup ──────────────────────────────────────────────────────────────
+const colorPopupKey = ref<string | null>(null)
+
+function onRightPanelClick() { colorPopupKey.value = null }
+
+// ─── Display / layout helpers ─────────────────────────────────────────────────
+const currentDisplay = computed(() => getStyleValue('display', ''))
+const isFlex = computed(() => currentDisplay.value.includes('flex'))
+const flexDir = computed(() => getStyleValue('flexDirection', 'row'))
+const isFlexRow = computed(() => !flexDir.value.includes('column'))
+
+const DISPLAY_MODES = [
+  {
+    value: 'block', label: 'Block',
+    icon: 'M3 5h18M3 12h18M3 19h18',
+  },
+  {
+    value: 'flex', label: 'Flex',
+    icon: 'M3 12h18M9 6l-6 6 6 6M15 6l6 6-6 6',
+  },
+  {
+    value: 'grid', label: 'Grid',
+    icon: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z',
+  },
+  {
+    value: 'inline-flex', label: 'Inline Flex',
+    icon: 'M8 5H5a2 2 0 00-2 2v10a2 2 0 002 2h3M16 5h3a2 2 0 012 2v10a2 2 0 01-2 2h-3M8 12h8',
+  },
+]
+
+interface AlignCell { key: string; justify: string; align: string; label: string; cx: number; cy: number }
+
+const ALIGN_CELLS: AlignCell[] = [
+  { key: 'tl', justify: 'flex-start', align: 'flex-start', label: 'Haut gauche',   cx: 3,  cy: 3  },
+  { key: 'tc', justify: 'center',     align: 'flex-start', label: 'Haut centre',   cx: 7,  cy: 3  },
+  { key: 'tr', justify: 'flex-end',   align: 'flex-start', label: 'Haut droite',   cx: 11, cy: 3  },
+  { key: 'ml', justify: 'flex-start', align: 'center',     label: 'Milieu gauche', cx: 3,  cy: 7  },
+  { key: 'mc', justify: 'center',     align: 'center',     label: 'Centre',        cx: 7,  cy: 7  },
+  { key: 'mr', justify: 'flex-end',   align: 'center',     label: 'Milieu droite', cx: 11, cy: 7  },
+  { key: 'bl', justify: 'flex-start', align: 'flex-end',   label: 'Bas gauche',    cx: 3,  cy: 11 },
+  { key: 'bc', justify: 'center',     align: 'flex-end',   label: 'Bas centre',    cx: 7,  cy: 11 },
+  { key: 'br', justify: 'flex-end',   align: 'flex-end',   label: 'Bas droite',    cx: 11, cy: 11 },
+]
+
+// Distribution values (space-between / space-around / space-evenly)
+// SVG: container lines + 3 item rects at x positions [left, center, right]
+const DISTRIB_VALUES = [
+  { value: 'space-between', label: 'Space between', lines: 'M0.5 2v10M13.5 2v10', rects: [1,   6,   11  ] },
+  { value: 'space-around',  label: 'Space around',  lines: 'M0.5 2v10M13.5 2v10', rects: [2,   6,   10  ] },
+  { value: 'space-evenly',  label: 'Space evenly',  lines: 'M0.5 2v10M13.5 2v10', rects: [2.5, 6,   9.5 ] },
+]
+
+const DISTRIB_SET = new Set(DISTRIB_VALUES.map((d) => d.value))
+
+function isAlignCellActive(cell: AlignCell): boolean {
+  const jc = getStyleValue('justifyContent', '')
+  // Distribution active → no 3×3 cell highlighted (distribution button takes over)
+  if (DISTRIB_SET.has(jc)) return false
+  const ai = getStyleValue('alignItems', '')
+  return isFlexRow.value
+    ? jc === cell.justify && ai === cell.align
+    : ai === cell.justify && jc === cell.align
+}
+
+function setAlignCell(cell: AlignCell) {
+  if (isFlexRow.value) {
+    setStyleValue('justifyContent', cell.justify)
+    setStyleValue('alignItems', cell.align)
+  } else {
+    setStyleValue('alignItems', cell.justify)
+    setStyleValue('justifyContent', cell.align)
+  }
+}
+
+// ─── Box shadow state ─────────────────────────────────────────────────────────
+const shadowEnabled = ref(false)
+const shadowX      = ref(0)
+const shadowY      = ref(4)
+const shadowBlur   = ref(8)
+const shadowSpread = ref(0)
+const shadowColor  = ref('rgba(0,0,0,0.15)')
+const shadowInner  = ref(false)
+
+function applyBoxShadow() {
+  if (!selectedBlockId.value) return
+  if (!shadowEnabled.value) { setStyleValue('boxShadow', ''); return }
+  const inset = shadowInner.value ? 'inset ' : ''
+  setStyleValue('boxShadow', `${inset}${shadowX.value}px ${shadowY.value}px ${shadowBlur.value}px ${shadowSpread.value}px ${shadowColor.value}`)
+}
+
+function initBoxShadow() {
+  const bs = getStyleValue('boxShadow', '')
+  if (!bs || bs === 'none') { shadowEnabled.value = false; return }
+  shadowEnabled.value = true
+  shadowInner.value   = bs.includes('inset')
+  const clean = bs.replace('inset', '').trim()
+  const nums  = clean.match(/-?\d+(?:\.\d+)?px/g) ?? []
+  shadowX.value      = parseFloat(nums[0] ?? '0')
+  shadowY.value      = parseFloat(nums[1] ?? '4')
+  shadowBlur.value   = parseFloat(nums[2] ?? '8')
+  shadowSpread.value = parseFloat(nums[3] ?? '0')
+  const colMatch = clean.match(/(rgba?\([^)]+\)|hsla?\([^)]+\)|#[0-9a-fA-F]{3,8})/)
+  shadowColor.value = colMatch ? colMatch[0] : 'rgba(0,0,0,0.15)'
 }
 
 // ─── Container mode (centered / full width) ───────────────────────────────────
@@ -1835,7 +2215,7 @@ function setContainerMode(mode: 'centered' | 'full') {
 }
 
 .vf-se-page {
-  width: calc(100% - 48px); max-width: 1280px;
+  max-width: 1280px;
   background: #fff;
   box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 8px 32px rgba(0,0,0,0.08);
   border-radius: 6px; border: 1px solid #e5e7eb;
@@ -1864,7 +2244,7 @@ function setContainerMode(mode: 'centered' | 'full') {
 
 // ─── Right panel ──────────────────────────────────────────────────────────────
 .vf-se-right {
-  width: 280px; min-width: 280px; background: #fff; border-left: 1px solid #e5e7eb;
+  width: 264px; min-width: 264px; background: #fff; border-left: 1px solid #e5e7eb;
   display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;
 
   &__tabs {
@@ -1882,8 +2262,8 @@ function setContainerMode(mode: 'centered' | 'full') {
   }
 
   &__content {
-    flex: 1; overflow-y: auto; padding: 14px;
-    display: flex; flex-direction: column; gap: 14px;
+    flex: 1; overflow-y: auto; padding: 0;
+    display: flex; flex-direction: column;
     &::-webkit-scrollbar { width: 4px; }
     &::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 2px; }
   }
@@ -1946,6 +2326,13 @@ function setContainerMode(mode: 'centered' | 'full') {
     justify-content: center; gap: 12px; padding: 32px 20px; text-align: center;
     p { font-size: 12px; color: #9ca3af; line-height: 1.6; max-width: 180px; }
   }
+
+  &__content--padded {
+    padding: 12px;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 // ─── Fields ───────────────────────────────────────────────────────────────────
@@ -1957,8 +2344,8 @@ function setContainerMode(mode: 'centered' | 'full') {
   input.vf-se-input,
   textarea.vf-se-input,
   .vf-se-input {
-    width: 100%; padding: 7px 10px; background: #f9fafb !important; border: 1px solid #e5e7eb !important;
-    border-radius: 6px; color: #111827 !important; font-size: 12.5px; font-family: inherit;
+    width: 100%; padding: 5px 8px; background: #f9fafb !important; border: 1px solid #e5e7eb !important;
+    border-radius: 5px; color: #111827 !important; font-size: 12px; font-family: inherit;
     outline: none; box-sizing: border-box; transition: border-color 150ms, background 150ms;
     &::placeholder { color: #9ca3af; }
     &:focus { border-color: #6366f1 !important; background: #fff !important; }
@@ -1966,9 +2353,9 @@ function setContainerMode(mode: 'centered' | 'full') {
 
   textarea.vf-se-textarea,
   .vf-se-textarea {
-    width: 100%; padding: 7px 10px; background: #f9fafb !important; border: 1px solid #e5e7eb !important;
-    border-radius: 6px; color: #111827 !important; font-size: 12.5px; font-family: inherit;
-    outline: none; box-sizing: border-box; resize: vertical; min-height: 72px; line-height: 1.55;
+    width: 100%; padding: 5px 8px; background: #f9fafb !important; border: 1px solid #e5e7eb !important;
+    border-radius: 5px; color: #111827 !important; font-size: 12px; font-family: inherit;
+    outline: none; box-sizing: border-box; resize: vertical; min-height: 68px; line-height: 1.55;
     transition: border-color 150ms, background 150ms;
     &::placeholder { color: #9ca3af; }
     &:focus { border-color: #6366f1 !important; background: #fff !important; }
@@ -1976,8 +2363,8 @@ function setContainerMode(mode: 'centered' | 'full') {
 
   select.vf-se-select,
   .vf-se-select {
-    width: 100%; padding: 7px 30px 7px 10px; background: #f9fafb !important; border: 1px solid #e5e7eb !important;
-    border-radius: 6px; color: #111827 !important; font-size: 12.5px; font-family: inherit;
+    width: 100%; padding: 5px 26px 5px 8px; background: #f9fafb !important; border: 1px solid #e5e7eb !important;
+    border-radius: 5px; color: #111827 !important; font-size: 12px; font-family: inherit;
     outline: none; appearance: none; cursor: pointer; box-sizing: border-box;
     &:focus { border-color: #6366f1 !important; }
   }
@@ -1992,7 +2379,7 @@ function setContainerMode(mode: 'centered' | 'full') {
 .vf-se-select-arrow { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none; }
 
 .vf-se-color-row { display: flex; align-items: center; gap: 8px; }
-.vf-se-color-swatch { width: 36px; height: 36px; border-radius: 6px; border: 1px solid #e5e7eb; padding: 2px; cursor: pointer; background: transparent; flex-shrink: 0; }
+.vf-se-color-swatch { width: 28px; height: 28px; border-radius: 5px; border: 1px solid #e5e7eb; padding: 2px; cursor: pointer; background: transparent; flex-shrink: 0; }
 
 .vf-se-toggle {
   display: flex; align-items: center; gap: 8px; cursor: pointer; width: fit-content;
@@ -2073,15 +2460,9 @@ function setContainerMode(mode: 'centered' | 'full') {
 // ─── Typography Panel ──────────────────────────────────────────────────────────
 
 .vf-se-section-title {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #9ca3af;
-  padding: 4px 0 6px;
-  border-top: 1px solid #f3f4f6;
-  margin-top: 2px;
-
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #9ca3af;
+  padding: 2px 0 4px; border-top: 1px solid #f3f4f6; margin-top: 2px;
   &:first-child { border-top: none; margin-top: 0; padding-top: 0; }
 }
 
@@ -2124,18 +2505,10 @@ function setContainerMode(mode: 'centered' | 'full') {
 }
 
 .vf-se-number-field {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: 0 8px;
-  height: 32px;
-  min-width: 0;
-  flex: 1;
+  display: flex; align-items: center; gap: 4px;
+  background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 5px;
+  padding: 0 7px; height: 28px; min-width: 0; flex: 1;
   transition: border-color 150ms;
-
   &:focus-within { border-color: #6366f1; background: #fff; }
 }
 
@@ -2232,26 +2605,52 @@ function setContainerMode(mode: 'centered' | 'full') {
   &--strike { text-decoration: line-through; }
 }
 
-// ─── Block chip ───────────────────────────────────────────────────────────────
-.vf-se-block-header {
-  display: flex; flex-direction: column; gap: 4px;
-  padding: 8px 12px 10px; border-bottom: 1px solid #f0f0f0; margin-bottom: 2px;
-}
-.vf-se-block-header__type {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.08em; color: #9ca3af;
-}
-.vf-se-block-header__name {
-  font-size: 13px; font-weight: 600; color: #111827;
-  background: transparent; border: 1px solid transparent;
-  border-radius: 5px; padding: 3px 6px; margin: 0 -6px;
-  font-family: inherit; outline: none; width: calc(100% + 12px);
-  box-sizing: border-box; transition: border-color 120ms, background 120ms;
-  &:hover { background: #f3f4f6; border-color: #e5e7eb; }
-  &:focus { background: #fff; border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,0.12); }
+// ─── Block header (Figma-style: type badge + editable name) ───────────────────
+.vf-se-block-hd {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; border-bottom: 1px solid #e5e7eb; flex-shrink: 0;
+
+  &__type {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: #6366f1; background: rgba(99,102,241,0.08); padding: 2px 6px; border-radius: 4px;
+    flex-shrink: 0; white-space: nowrap;
+  }
+
+  &__name {
+    flex: 1; min-width: 0; font-size: 12.5px; font-weight: 500; color: #111827;
+    background: transparent; border: 1px solid transparent; border-radius: 4px;
+    padding: 3px 6px; font-family: inherit; outline: none;
+    &:hover { background: #f3f4f6; border-color: #e5e7eb; }
+    &:focus { background: #fff; border-color: #6366f1; }
+  }
 }
 
-// ─── Flat panel body ──────────────────────────────────────────────────────────
+// ─── Collapsible section header (Figma-style) ─────────────────────────────────
+.vf-se-sec-hd {
+  display: flex; align-items: center; gap: 6px;
+  width: 100%; height: 34px; padding: 0 12px;
+  border: none; border-top: 1px solid #f0f0f0; background: transparent;
+  cursor: pointer; outline: none; font-family: inherit; flex-shrink: 0;
+  &:hover { background: #f9fafb; }
+
+  &__label {
+    flex: 1; text-align: left; font-size: 11px; font-weight: 600; color: #6b7280;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  &__chevron {
+    color: #9ca3af; flex-shrink: 0; transition: transform 150ms;
+    &--open { transform: rotate(90deg); }
+  }
+}
+
+// ─── Collapsible section body ─────────────────────────────────────────────────
+.vf-se-sec-body {
+  padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
+  border-top: 1px solid #f5f5f5;
+}
+
+// ─── Legacy flat panel body (kept for backward compat) ────────────────────────
 .vf-se-panel__bd {
   display: flex; flex-direction: column; gap: 8px;
 }
@@ -2445,5 +2844,240 @@ function setContainerMode(mode: 'centered' | 'full') {
     border-color: #6366f1;
     color: #4f46e5;
   }
+}
+
+// ─── Block header opacity ─────────────────────────────────────────────────────
+.vf-se-block-hd {
+  &__opacity {
+    display: flex; align-items: center; gap: 2px; flex-shrink: 0;
+    background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 4px;
+    padding: 2px 5px; min-width: 0;
+  }
+  &__opacity-input {
+    width: 28px; border: none; background: transparent; outline: none;
+    font-size: 11px; color: #374151; text-align: right; font-family: inherit;
+    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { -webkit-appearance: none; }
+  }
+  &__opacity-unit { font-size: 10px; color: #9ca3af; }
+}
+
+// ─── Dimension row (W/H) ──────────────────────────────────────────────────────
+.vf-se-dim-row {
+  display: flex; gap: 6px;
+}
+.vf-se-dim-field {
+  display: flex; align-items: center; gap: 4px; flex: 1;
+  background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 5px;
+  padding: 0 7px; height: 28px; min-width: 0;
+  transition: border-color 150ms;
+  &:focus-within { border-color: #6366f1; background: #fff; }
+}
+.vf-se-dim-lbl {
+  font-size: 10px; font-weight: 600; color: #9ca3af; flex-shrink: 0; width: 10px;
+}
+.vf-se-dim-input {
+  flex: 1; min-width: 0; border: none; background: transparent; outline: none;
+  font-size: 12px; color: #111827; font-family: inherit;
+  &::placeholder { color: #d1d5db; }
+}
+
+// ─── Display mode buttons ─────────────────────────────────────────────────────
+.vf-se-display-row {
+  display: flex; gap: 2px; align-items: center;
+  background: #f3f4f6; border-radius: 6px; padding: 2px;
+}
+.vf-se-display-btn {
+  display: flex; align-items: center; justify-content: center;
+  flex: 1; height: 26px; border: none; background: transparent; border-radius: 4px;
+  color: #6b7280; cursor: pointer; outline: none; transition: all 120ms;
+  &:hover { color: #374151; background: rgba(0,0,0,0.05); }
+  &--active { background: #fff; color: #6366f1; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+}
+
+// ─── Auto layout ─────────────────────────────────────────────────────────────
+.vf-se-autolayout-row {
+  display: flex; gap: 6px; align-items: flex-start;
+}
+.vf-se-dir-btns {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.vf-se-dir-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; border: 1px solid #e5e7eb;
+  background: #f9fafb; border-radius: 5px; color: #6b7280;
+  cursor: pointer; outline: none; transition: all 120ms;
+  &:hover { border-color: #6366f1; color: #6366f1; background: #f0f0ff; }
+  &--active { background: #eff0fe; border-color: #6366f1; color: #6366f1; }
+}
+.vf-se-align-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; flex: 1;
+}
+.vf-se-align-cell {
+  display: flex; align-items: center; justify-content: center;
+  height: 26px; border: 1px solid #e5e7eb; background: #f9fafb;
+  border-radius: 4px; cursor: pointer; outline: none; transition: all 120ms;
+  color: #9ca3af;
+  &:hover { border-color: #6366f1; color: #6366f1; background: #f0f0ff; }
+  &--active { background: #eff0fe; border-color: #6366f1; color: #6366f1; }
+}
+.vf-se-gap-row {
+  display: flex; gap: 6px;
+}
+
+// ─── Distribution buttons ─────────────────────────────────────────────────────
+.vf-se-distrib-row {
+  display: flex; gap: 2px;
+}
+.vf-se-distrib-btn {
+  display: flex; align-items: center; justify-content: center;
+  flex: 1; height: 24px; border: 1px solid #e5e7eb;
+  background: #f9fafb; border-radius: 4px; cursor: pointer; outline: none;
+  color: #9ca3af; transition: all 120ms;
+  &:hover { border-color: #6366f1; color: #6366f1; background: #f0f0ff; }
+  &--active { background: #eff0fe; border-color: #6366f1; color: #6366f1; }
+}
+
+// ─── Spacing box (padding + margin) ─────────────────────────────────────────
+.vf-se-spacing-box {
+  display: flex; flex-direction: column; gap: 6px;
+  & + & { margin-top: 2px; padding-top: 8px; border-top: 1px solid #f3f4f6; }
+
+  &__hd {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  &__title {
+    font-size: 10px; font-weight: 600; color: #9ca3af;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+}
+
+.vf-se-spacing-modes {
+  display: flex; gap: 1px;
+  background: #f3f4f6; border-radius: 4px; padding: 1px;
+}
+.vf-se-spacing-mode {
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 20px; border: none; background: transparent;
+  border-radius: 3px; cursor: pointer; outline: none; color: #9ca3af;
+  transition: all 100ms;
+  &:hover { color: #374151; }
+  &.active { background: #fff; color: #6366f1; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+}
+
+// ─── Fill list ────────────────────────────────────────────────────────────────
+.vf-se-sec-hd-wrap {
+  display: flex; align-items: center; width: 100%;
+  border-top: 1px solid #f0f0f0;
+  & > .vf-se-sec-hd { flex: 1; border-top: none; }
+}
+.vf-se-sec-hd-add {
+  width: 28px; height: 34px; border: none; background: transparent;
+  color: #9ca3af; cursor: pointer; outline: none; font-size: 14px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: color 120ms;
+  &:hover { color: #6366f1; }
+}
+.vf-se-fill-row {
+  display: flex; align-items: center; gap: 6px; padding: 0 2px;
+}
+.vf-se-fill-swatch-wrap {
+  position: relative; flex-shrink: 0;
+}
+.vf-se-fill-swatch {
+  width: 22px; height: 22px; border-radius: 4px; border: 1px solid rgba(0,0,0,0.15);
+  cursor: pointer; padding: 0; outline: none;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: transform 120ms;
+  &:hover { transform: scale(1.1); }
+  &--sm { width: 18px; height: 18px; }
+}
+.vf-se-fill-value {
+  flex: 1; min-width: 0; font-size: 11px; color: #374151;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.vf-se-fill-opacity-wrap {
+  display: flex; align-items: center; gap: 1px;
+  font-size: 11px; color: #6b7280;
+}
+.vf-se-fill-opacity-input {
+  width: 30px; border: none; background: transparent; outline: none;
+  font-size: 11px; color: #374151; text-align: right; font-family: inherit;
+  &::-webkit-inner-spin-button { -webkit-appearance: none; }
+}
+.vf-se-fill-del {
+  width: 18px; height: 18px; border: none; background: transparent;
+  color: #9ca3af; cursor: pointer; outline: none; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  &:hover { color: #ef4444; background: #fef2f2; }
+}
+.vf-se-fill-add-btn {
+  width: 100%; padding: 6px; border: 1px dashed #d1d5db; border-radius: 5px;
+  background: transparent; color: #9ca3af; font-size: 11px; cursor: pointer; outline: none;
+  font-family: inherit;
+  &:hover { border-color: #6366f1; color: #6366f1; background: #f5f5ff; }
+}
+.vf-se-fill-empty { padding: 0 2px; }
+
+// ─── Color popup ──────────────────────────────────────────────────────────────
+.vf-se-color-popup {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 1000;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.14), 0 2px 6px rgba(0,0,0,0.08);
+  padding: 10px; width: 220px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.vf-se-color-popup__picker {
+  width: 100%; height: 120px; border: none; padding: 0; cursor: pointer;
+  border-radius: 5px; outline: none;
+}
+.vf-se-color-popup__row {
+  display: flex; gap: 6px; align-items: center;
+}
+.vf-se-color-popup__hex {
+  flex: 1; padding: 5px 8px; border: 1px solid #e5e7eb; border-radius: 5px;
+  font-size: 12px; color: #111827; background: #f9fafb; outline: none; font-family: inherit;
+  &:focus { border-color: #6366f1; background: #fff; }
+}
+.vf-se-popup-tabs {
+  display: flex; gap: 2px;
+  background: #f3f4f6; border-radius: 5px; padding: 2px;
+}
+.vf-se-popup-tab {
+  flex: 1; height: 24px; border: none; background: transparent;
+  border-radius: 4px; font-size: 11px; color: #6b7280; cursor: pointer; outline: none; font-family: inherit;
+  &.active { background: #fff; color: #6366f1; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+}
+
+// ─── Section body row ─────────────────────────────────────────────────────────
+.vf-se-sec-body__row {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+}
+
+// ─── Effects ─────────────────────────────────────────────────────────────────
+.vf-se-effect-row {
+  display: flex; align-items: center; gap: 8px;
+}
+.vf-se-effect-toggle {
+  width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid #d1d5db;
+  background: transparent; cursor: pointer; outline: none; padding: 0;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all 120ms;
+  &--on { border-color: #6366f1; background: #6366f1; }
+  &__dot { width: 5px; height: 5px; border-radius: 50%; background: #fff; }
+}
+.vf-se-effect-label {
+  flex: 1; font-size: 12px; color: #374151;
+}
+.vf-se-shadow-fields {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px;
+}
+.vf-se-shadow-field {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.vf-se-shadow-lbl {
+  font-size: 9px; color: #9ca3af; text-align: center; text-transform: uppercase;
+}
+.vf-se-fx-divider {
+  height: 1px; background: #f0f0f0; margin: 4px 0;
 }
 </style>

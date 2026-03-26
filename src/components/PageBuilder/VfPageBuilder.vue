@@ -682,8 +682,8 @@ watch(() => pb.selectedSection.value?.instanceId, () => {
 
 // ─── Insert slot ──────────────────────────────────────────────────────────────
 .vf-pb-insert-slot {
-  display: flex; align-items: center; justify-content: center; height: 24px;
-  opacity: 0; transition: opacity 180ms; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 180ms; position: relative; z-index: 2;
   &::before { content: ''; position: absolute; left: 20px; right: 20px; top: 50%; height: 1px; background: var(--vf-accent, #6366f1); opacity: 0; transform: scaleX(0); transition: opacity 180ms, transform 180ms; transform-origin: center; }
   &:hover { opacity: 1; &::before { opacity: 0.4; transform: scaleX(1); } }
 }
@@ -694,7 +694,7 @@ watch(() => pb.selectedSection.value?.instanceId, () => {
   width: 24px; height: 24px; border-radius: 50%; background: var(--vf-accent, #6366f1);
   border: none; color: #fff; cursor: pointer; transition: all 150ms;
   box-shadow: 0 2px 8px var(--vf-accent-glow, rgba(99,102,241,0.4));
-  position: relative; z-index: 5; outline: none;
+  position: absolute; z-index: 5; outline: none;
   &:hover { transform: scale(1.2); box-shadow: 0 4px 16px var(--vf-accent-glow, rgba(99,102,241,0.5)); }
 }
 

@@ -36,30 +36,30 @@ export const featuresSections: SectionTemplate[] = [
             children: [
               {
                 id: 'feature-1',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Fonctionnalité 1' },
                 children: [
-                  { id: 'icon-1', type: 'icon', props: { name: 'zap' }, meta: { label: 'Icône', editableProps: [{ key: 'name', label: 'Nom de l\'icône', type: 'text', default: 'zap' }] } },
+                  { id: 'icon-1', type: 'vf-icon', props: { name: 'zap' }, meta: { label: 'Icône', editableProps: [{ key: 'name', label: 'Nom de l\'icône', type: 'text', default: 'zap' }] } },
                   { id: 'title-1', type: 'vf-heading', text: 'Rapidité', props: { tag: 'h3' }, meta: { label: 'Titre', editableProps: [TAG_PROP] } },
                   { id: 'desc-1', type: 'vf-text', text: 'Des performances optimisées pour une expérience fluide.', props: { tag: 'p' }, meta: { label: 'Description', editableProps: [TAG_PROP] } },
                 ],
               },
               {
                 id: 'feature-2',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Fonctionnalité 2' },
                 children: [
-                  { id: 'icon-2', type: 'icon', props: { name: 'shield' }, meta: { label: 'Icône', editableProps: [{ key: 'name', label: 'Nom de l\'icône', type: 'text', default: 'shield' }] } },
+                  { id: 'icon-2', type: 'vf-icon', props: { name: 'shield' }, meta: { label: 'Icône', editableProps: [{ key: 'name', label: 'Nom de l\'icône', type: 'text', default: 'shield' }] } },
                   { id: 'title-2', type: 'vf-heading', text: 'Sécurité', props: { tag: 'h3' }, meta: { label: 'Titre', editableProps: [TAG_PROP] } },
                   { id: 'desc-2', type: 'vf-text', text: 'Données chiffrées et sauvegardes automatiques.', props: { tag: 'p' }, meta: { label: 'Description', editableProps: [TAG_PROP] } },
                 ],
               },
               {
                 id: 'feature-3',
-                type: 'card',
+                type: 'vf-card',
                 meta: { label: 'Fonctionnalité 3' },
                 children: [
-                  { id: 'icon-3', type: 'icon', props: { name: 'layers' }, meta: { label: 'Icône', editableProps: [{ key: 'name', label: 'Nom de l\'icône', type: 'text', default: 'layers' }] } },
+                  { id: 'icon-3', type: 'vf-icon', props: { name: 'layers' }, meta: { label: 'Icône', editableProps: [{ key: 'name', label: 'Nom de l\'icône', type: 'text', default: 'layers' }] } },
                   { id: 'title-3', type: 'vf-heading', text: 'Flexibilité', props: { tag: 'h3' }, meta: { label: 'Titre', editableProps: [TAG_PROP] } },
                   { id: 'desc-3', type: 'vf-text', text: 'Compatible avec tous les design systems Vue.js.', props: { tag: 'p' }, meta: { label: 'Description', editableProps: [TAG_PROP] } },
                 ],
@@ -95,7 +95,7 @@ export const featuresSections: SectionTemplate[] = [
                 style: { display: 'flex', flexDirection: 'column', gap: '16px' },
                 meta: { label: 'Colonne texte' },
                 children: [
-                  { id: 'label', type: 'badge', text: 'Fonctionnalités', meta: { label: 'Badge', editableProps: [{ key: 'text', label: 'Badge', type: 'text', default: 'Fonctionnalités' }] } },
+                  { id: 'label', type: 'vf-chip', text: 'Fonctionnalités', meta: { label: 'Badge', editableProps: [{ key: 'text', label: 'Badge', type: 'text', default: 'Fonctionnalités' }] } },
                   { id: 'heading', type: 'vf-heading', text: 'Conçu pour les équipes', props: { tag: 'h2' }, meta: { label: 'Titre', editableProps: [TAG_PROP] } },
                   { id: 'desc', type: 'vf-text', text: 'Toutes les fonctionnalités dont vous avez besoin pour créer des expériences exceptionnelles.', props: { tag: 'p' }, meta: { label: 'Description', editableProps: [TAG_PROP] } },
                 ],
@@ -112,7 +112,7 @@ export const featuresSections: SectionTemplate[] = [
                     style: { display: 'flex', alignItems: 'flex-start', gap: '10px' },
                     meta: { label: 'Fonctionnalité 1' },
                     children: [
-                      { id: 'feat-icon-1', type: 'icon', props: { name: 'check-circle', size: 20 }, meta: { label: 'Icône' } },
+                      { id: 'feat-icon-1', type: 'vf-icon', props: { name: 'check-circle', size: 20 }, meta: { label: 'Icône' } },
                       { id: 'feat-text-1', type: 'vf-text', text: 'Design system agnostique', props: { tag: 'p' }, meta: { label: 'Texte', editableProps: [TAG_PROP] } },
                     ],
                   },
@@ -122,7 +122,7 @@ export const featuresSections: SectionTemplate[] = [
                     style: { display: 'flex', alignItems: 'flex-start', gap: '10px' },
                     meta: { label: 'Fonctionnalité 2' },
                     children: [
-                      { id: 'feat-icon-2', type: 'icon', props: { name: 'check-circle', size: 20 }, meta: { label: 'Icône' } },
+                      { id: 'feat-icon-2', type: 'vf-icon', props: { name: 'check-circle', size: 20 }, meta: { label: 'Icône' } },
                       { id: 'feat-text-2', type: 'vf-text', text: 'Sections pré-construites', props: { tag: 'p' }, meta: { label: 'Texte', editableProps: [TAG_PROP] } },
                     ],
                   },
@@ -132,7 +132,7 @@ export const featuresSections: SectionTemplate[] = [
                     style: { display: 'flex', alignItems: 'flex-start', gap: '10px' },
                     meta: { label: 'Fonctionnalité 3' },
                     children: [
-                      { id: 'feat-icon-3', type: 'icon', props: { name: 'check-circle', size: 20 }, meta: { label: 'Icône' } },
+                      { id: 'feat-icon-3', type: 'vf-icon', props: { name: 'check-circle', size: 20 }, meta: { label: 'Icône' } },
                       { id: 'feat-text-3', type: 'vf-text', text: 'Drag & Drop intuitif', props: { tag: 'p' }, meta: { label: 'Texte', editableProps: [TAG_PROP] } },
                     ],
                   },
@@ -142,7 +142,7 @@ export const featuresSections: SectionTemplate[] = [
                     style: { display: 'flex', alignItems: 'flex-start', gap: '10px' },
                     meta: { label: 'Fonctionnalité 4' },
                     children: [
-                      { id: 'feat-icon-4', type: 'icon', props: { name: 'check-circle', size: 20 }, meta: { label: 'Icône' } },
+                      { id: 'feat-icon-4', type: 'vf-icon', props: { name: 'check-circle', size: 20 }, meta: { label: 'Icône' } },
                       { id: 'feat-text-4', type: 'vf-text', text: 'Export JSON portable', props: { tag: 'p' }, meta: { label: 'Texte', editableProps: [TAG_PROP] } },
                     ],
                   },
