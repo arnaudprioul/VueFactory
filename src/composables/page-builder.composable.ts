@@ -250,6 +250,14 @@ export function createPageBuilder (initialPage?: Partial<PageConfig>, directAdap
     state.page.name = name
   }
 
+  const updateDataSchema = (schema: Record<string, string>) => {
+    state.page.dataSchema = schema
+  }
+
+  const updatePreviewData = (json: string) => {
+    state.page.previewData = json
+  }
+
   const exportPage = (): PageConfig => JSON.parse(JSON.stringify(state.page))
 
   const loadPage = (page: PageConfig) => {
@@ -303,6 +311,8 @@ export function createPageBuilder (initialPage?: Partial<PageConfig>, directAdap
     selectSection,
     selectBlock,
     setPageName,
+    updateDataSchema,
+    updatePreviewData,
     exportPage,
     loadPage,
     toggleSectionPicker,

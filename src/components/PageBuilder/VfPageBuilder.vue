@@ -37,6 +37,11 @@
           {{ pb.adapter.value.name }}
         </button>
         <div class="vf-pb-sep"/>
+        <!-- Data binding panel toggle -->
+        <button :class="['vf-pb-icon-btn', { 'vf-pb-icon-btn--active': dataPanelOpen }]" @click="dataPanelOpen = !dataPanelOpen" title="Données & liaisons">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        </button>
+        <div class="vf-pb-sep"/>
         <button v-if="pb.selectedSection.value" class="vf-pb-btn vf-pb-btn--ghost" @click="saveTemplateOpen = true" title="Sauvegarder comme template">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Template
@@ -71,13 +76,24 @@
     <!-- MAIN LAYOUT -->
     <div class="vf-pb-layout">
 
-      <!-- LEFT PANEL: always sections library -->
+      <!-- LEFT PANEL: sections library -->
       <aside v-if="!pb.state.previewMode" :class="['vf-pb-left', { 'vf-pb-left--hidden': !pb.state.sectionPickerOpen }]">
         <VfSectionPicker
           @add="onPickerAdd($event)"
           @settings="onSectionSettings($event)"
           @add-section="onAddSectionType($event)"
           @add-category="onAddCategory()"
+        />
+      </aside>
+
+      <!-- DATA PANEL (slides in from left, independent of section picker) -->
+      <aside v-if="!pb.state.previewMode && dataPanelOpen" class="vf-pb-data-panel">
+        <VfDataPanel
+          :data-schema="pb.state.page.dataSchema"
+          :preview-data="pb.state.page.previewData"
+          @update:data-schema="pb.updateDataSchema($event)"
+          @update:preview-data="pb.updatePreviewData($event)"
+          @close="dataPanelOpen = false"
         />
       </aside>
 
@@ -114,6 +130,7 @@
                 :is-first="idx === 0"
                 :is-last="idx === pb.sortedSections.value.length - 1"
                 :preview-mode="pb.state.previewMode"
+                :data-context="dataContext"
                 @select="onEditSection($event)"
                 @remove="pb.removeSection($event)"
                 @duplicate="pb.duplicateSection($event)"
@@ -252,6 +269,7 @@ import { ref, computed, watch } from 'vue'
 import type { StyleValue } from 'vue'
 import type { PageConfig, SectionTemplate, SectionInstance, BlockDefinition, SectionCategory, DesignSystemAdapter } from '../../types'
 import { createPageBuilder } from '../../composables/page-builder.composable.ts'
+import { buildDataContext } from '../../composables/useDataBinding'
 import { getSectionById, registerSection } from '../../sections'
 import { VfSectionPicker } from '../SectionPicker'
 import { VfSectionRenderer } from '../SectionRenderer'
@@ -260,12 +278,15 @@ import { VfDesignSystemMapper } from '../DesignSystemMapper'
 import { VfSaveTemplateModal } from '../SaveTemplateModal'
 import { VfSectionEditor } from '../SectionEditor'
 import { VfNewSectionModal } from '../NewSectionModal'
+import { VfDataPanel } from '../DataPanel'
 
 interface Props {
   id?: string
   page?: Partial<PageConfig>
   adapter?: DesignSystemAdapter
   fullHeight?: boolean
+  /** Runtime API data passed by the consumer application */
+  pageData?: Record<string, unknown>
 }
 const props = withDefaults(defineProps<Props>(), { fullHeight: true })
 const emit = defineEmits<{
@@ -286,6 +307,7 @@ const DEVICES = [
 
 const insertAtIndex = ref<number | null>(null)
 const saveTemplateOpen = ref(false)
+const dataPanelOpen = ref(false)
 const editorOpen = ref(false)
 const editorInstanceId = ref<string | null>(null)
 const newSectionModalOpen = ref(false)
@@ -300,6 +322,16 @@ const editorInstance = computed(() =>
 const editorTemplate = computed(() =>
   editorInstance.value ? getSectionById(editorInstance.value.templateId) ?? null : null
 )
+
+/** Resolved data context: merges pageData (from consumer) with page previewData (in editor). */
+const dataContext = computed(() => {
+  // In edit mode: use previewData as the data source if no live pageData provided
+  const liveData = props.pageData
+  const previewStr = pb.state.page.previewData
+  const effectiveData: Record<string, unknown> = liveData
+    ?? (previewStr ? (() => { try { return JSON.parse(previewStr) } catch { return {} } })() : {})
+  return buildDataContext(pb.state.page.dataSchema, effectiveData)
+})
 
 const rootStyle = computed((): StyleValue => [props.fullHeight ? { height: '100%' } : undefined])
 
@@ -564,6 +596,15 @@ watch(() => pb.selectedSection.value?.instanceId, () => {
 
 // ─── Layout ───────────────────────────────────────────────────────────────────
 .vf-pb-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+
+// ─── Data Panel ───────────────────────────────────────────────────────────────
+.vf-pb-data-panel {
+  width: 260px; min-width: 260px; height: 100%;
+  background: #1a1a2e;
+  border-right: 1px solid #2d3748;
+  display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0;
+  z-index: 10;
+}
 
 // ─── Left Panel ───────────────────────────────────────────────────────────────
 .vf-pb-left {

@@ -186,7 +186,8 @@
             <!-- Tabs -->
             <div class="vf-se-right__tabs">
               <button :class="['vf-se-right__tab', { 'vf-se-right__tab--active': rightTab === 'props' }]" @click="rightTab = 'props'">Propriétés</button>
-              <button :class="['vf-se-right__tab', { 'vf-se-right__tab--active': rightTab === 'attrs' }]" @click="rightTab = 'attrs'">Attributs HTML</button>
+              <button :class="['vf-se-right__tab', { 'vf-se-right__tab--active': rightTab === 'data' }]" @click="rightTab = 'data'">Données</button>
+              <button :class="['vf-se-right__tab', { 'vf-se-right__tab--active': rightTab === 'attrs' }]" @click="rightTab = 'attrs'">Attributs</button>
             </div>
 
             <!-- Props tab -->
@@ -306,8 +307,31 @@
                 <div v-if="panelOpen.props" class="vf-se-sec-body">
                   <div v-for="prop in editableProps" :key="prop.key" class="vf-se-field">
                     <label class="vf-se-label">{{ prop.label }}</label>
-                    <!-- Text content prop — routes to textOverrides, not propOverrides -->
-                    <textarea v-if="prop.key==='text'" :value="getTextValue()" class="vf-se-textarea" rows="3" @input="onUpdateText({instanceId:instance.instanceId,blockId:selectedBlockId!,text:($event.target as HTMLTextAreaElement).value})" />
+                    <!-- Text content prop — with optional data binding -->
+                    <template v-if="prop.key==='text'">
+                      <!-- Binding active: show binding input instead of textarea -->
+                      <div v-if="selectedBlock?.meta?.textBinding !== undefined && selectedBlock.meta.textBinding !== ''" class="vf-se-text-binding-active">
+                        <input
+                          type="text"
+                          class="vf-se-binding-input vf-se-binding-input--mono"
+                          :value="selectedBlock.meta.textBinding"
+                          placeholder="ex: user.name ou {{userName}}"
+                          @change="onSetTextBinding(($event.target as HTMLInputElement).value)"
+                        />
+                        <button class="vf-se-text-binding-unlink" title="Retirer la liaison" @click="onSetTextBinding('')">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18.84 12.25l1.72-1.71h-.02a5.004 5.004 0 00-.12-7.07 5.006 5.006 0 00-6.95 0l-1.72 1.71"/><path d="M5.17 11.75l-1.71 1.71a5.004 5.004 0 00.12 7.07 5.006 5.006 0 006.95 0l1.71-1.71"/><line x1="8" y1="2" x2="8" y2="5"/><line x1="2" y1="8" x2="5" y2="8"/><line x1="16" y1="19" x2="16" y2="22"/><line x1="19" y1="16" x2="22" y2="16"/></svg>
+                          Retirer la liaison
+                        </button>
+                      </div>
+                      <!-- Normal text editing -->
+                      <template v-else>
+                        <textarea :value="getTextValue()" class="vf-se-textarea" rows="3" @input="onUpdateText({instanceId:instance.instanceId,blockId:selectedBlockId!,text:($event.target as HTMLTextAreaElement).value})" />
+                        <button class="vf-se-text-binding-link" @click="onSetTextBinding(getTextValue() || '')">
+                          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+                          Lier à une donnée
+                        </button>
+                      </template>
+                    </template>
                     <input v-else-if="prop.type==='text'||prop.type==='url'||prop.type==='image-url'" :value="getPropValue(prop.key,prop.default)" class="vf-se-input" :type="prop.type==='url'||prop.type==='image-url'?'url':'text'" :placeholder="prop.placeholder??String(prop.default??'')" @input="onUpdateProp({instanceId:instance.instanceId,blockId:selectedBlockId!,key:prop.key,value:($event.target as HTMLInputElement).value})" />
                     <textarea v-else-if="prop.type==='textarea'" :value="String(getPropValue(prop.key,prop.default)??'')" class="vf-se-textarea" rows="3" @input="onUpdateProp({instanceId:instance.instanceId,blockId:selectedBlockId!,key:prop.key,value:($event.target as HTMLTextAreaElement).value})" />
                     <input v-else-if="prop.type==='number'" :value="getPropValue(prop.key,prop.default)" class="vf-se-input" type="number" @input="onUpdateProp({instanceId:instance.instanceId,blockId:selectedBlockId!,key:prop.key,value:Number(($event.target as HTMLInputElement).value)})" />
@@ -954,6 +978,77 @@
 
             </div>
 
+            <!-- Data binding tab -->
+            <div v-else-if="rightTab === 'data'" class="vf-se-right__content vf-se-right__content--padded">
+
+              <!-- Condition display -->
+              <div class="vf-se-sec-hd-wrap">
+                <button class="vf-se-sec-hd" @click="panelOpen.condition = !panelOpen.condition">
+                  <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.condition}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span class="vf-se-sec-hd__label">Condition d'affichage</span>
+                  <span v-if="selectedBlock?.meta?.condition" class="vf-se-binding-badge">actif</span>
+                </button>
+              </div>
+              <div v-if="panelOpen.condition" class="vf-se-sec-body">
+                <p class="vf-se-binding-hint">
+                  Expression JS évaluée contre les données. Le bloc est masqué quand la valeur est <code>false</code>.
+                </p>
+                <div class="vf-se-binding-row">
+                  <span class="vf-se-binding-label">Afficher si</span>
+                  <input
+                    type="text"
+                    class="vf-se-binding-input vf-se-binding-input--mono"
+                    :value="selectedBlock?.meta?.condition ?? ''"
+                    placeholder="ex: user.isLoggedIn"
+                    @change="onSetCondition(($event.target as HTMLInputElement).value)"
+                  />
+                </div>
+                <button v-if="selectedBlock?.meta?.condition" class="vf-se-binding-clear" @click="onSetCondition('')">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Retirer la condition
+                </button>
+              </div>
+
+              <!-- Prop bindings -->
+              <div class="vf-se-sec-hd-wrap" style="margin-top:4px">
+                <button class="vf-se-sec-hd" @click="panelOpen.propBindings = !panelOpen.propBindings">
+                  <svg class="vf-se-sec-hd__chevron" :class="{'vf-se-sec-hd__chevron--open': panelOpen.propBindings}" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                  <span class="vf-se-sec-hd__label">Liaisons de props</span>
+                  <span v-if="propBindingRows.length" class="vf-se-binding-badge">{{ propBindingRows.length }}</span>
+                </button>
+              </div>
+              <div v-if="panelOpen.propBindings" class="vf-se-sec-body">
+                <p class="vf-se-binding-hint">
+                  Liez des props à des données dynamiques (ex : <code>src</code> → <code>product.imageUrl</code>).
+                </p>
+                <div v-for="(row, i) in propBindingRows" :key="i" class="vf-se-binding-prop-row">
+                  <input
+                    type="text"
+                    class="vf-se-binding-input"
+                    :value="row.propName"
+                    placeholder="prop"
+                    @change="updatePropBindingRow(i, 'propName', ($event.target as HTMLInputElement).value)"
+                  />
+                  <span class="vf-se-binding-arrow">→</span>
+                  <input
+                    type="text"
+                    class="vf-se-binding-input vf-se-binding-input--mono"
+                    :value="row.path"
+                    placeholder="dot.path"
+                    @change="updatePropBindingRow(i, 'path', ($event.target as HTMLInputElement).value)"
+                  />
+                  <button class="vf-se-binding-del" @click="removePropBindingRow(i)" title="Supprimer">
+                    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                </div>
+                <button class="vf-se-binding-add" @click="addPropBindingRow">
+                  <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Ajouter une liaison
+                </button>
+              </div>
+
+            </div>
+
             <!-- Attrs tab -->
             <div v-else-if="rightTab === 'attrs'" class="vf-se-right__content vf-se-right__content--padded">
               <div class="vf-se-attrs-info">
@@ -1049,7 +1144,7 @@ const emit = defineEmits<{
 // ─── State ────────────────────────────────────────────────────────────────────
 
 const selectedBlockId = ref<string | null>(null)
-const rightTab = ref<'props' | 'attrs'>('props')
+const rightTab = ref<'props' | 'data' | 'attrs'>('props')
 const expandedIds = ref<Set<string>>(new Set())
 const componentSearch = ref('')
 const sectionSettingsOpen = ref(false)
@@ -1065,6 +1160,8 @@ const panelOpen = reactive({
   fill: false,
   effects: false,
   border: false,
+  condition: true,
+  propBindings: true,
 })
 
 const newAttrKey = ref('')
@@ -1789,6 +1886,61 @@ function addCustomAttr() {
   newAttrVal.value = ''
 }
 
+// ─── Data Binding ─────────────────────────────────────────────────────────────
+
+function patchBlockMeta(id: string, patch: Record<string, unknown>) {
+  function walk(blocks: BlockDefinition[]): BlockDefinition[] {
+    return blocks.map((b) => {
+      if (b.id === id) return { ...b, meta: { ...b.meta, ...patch } }
+      if (b.children?.length) return { ...b, children: walk(b.children) }
+      return b
+    })
+  }
+  workingBlocks.value = walk(workingBlocks.value)
+}
+
+function onSetCondition(expr: string) {
+  if (!selectedBlockId.value) return
+  patchBlockMeta(selectedBlockId.value, { condition: expr || undefined })
+}
+
+function onSetTextBinding(binding: string) {
+  if (!selectedBlockId.value) return
+  patchBlockMeta(selectedBlockId.value, { textBinding: binding || undefined })
+}
+
+// Prop bindings — local rows synced to/from block meta
+interface PropBindingRow { propName: string; path: string }
+
+const propBindingRows = computed<PropBindingRow[]>(() => {
+  const bindings = selectedBlock.value?.meta?.propBindings ?? {}
+  return Object.entries(bindings).map(([propName, path]) => ({ propName, path }))
+})
+
+function updatePropBindingRow(i: number, field: 'propName' | 'path', val: string) {
+  if (!selectedBlockId.value) return
+  const rows = [...propBindingRows.value]
+  rows[i] = { ...rows[i], [field]: val }
+  const bindings: Record<string, string> = {}
+  for (const row of rows) { if (row.propName.trim()) bindings[row.propName.trim()] = row.path.trim() }
+  patchBlockMeta(selectedBlockId.value, { propBindings: Object.keys(bindings).length ? bindings : undefined })
+}
+
+function addPropBindingRow() {
+  if (!selectedBlockId.value) return
+  const bindings: Record<string, string> = { ...(selectedBlock.value?.meta?.propBindings ?? {}), '': '' }
+  patchBlockMeta(selectedBlockId.value, { propBindings: bindings })
+}
+
+function removePropBindingRow(i: number) {
+  if (!selectedBlockId.value) return
+  const rows = [...propBindingRows.value]
+  rows.splice(i, 1)
+  const bindings: Record<string, string> = {}
+  for (const row of rows) { if (row.propName.trim()) bindings[row.propName.trim()] = row.path.trim() }
+  patchBlockMeta(selectedBlockId.value, { propBindings: Object.keys(bindings).length ? bindings : undefined })
+}
+
 // ─── Add component ────────────────────────────────────────────────────────────
 
 const BUILTIN_COMPONENTS: Array<{
@@ -2443,6 +2595,48 @@ function setContainerMode(mode: 'centered' | 'full') {
 .vf-se-no-props { font-size: 12px; color: #9ca3af; padding: 8px 0; }
 
 // ─── Attributes ───────────────────────────────────────────────────────────────
+// ─── Data Binding Panel ───────────────────────────────────────────────────────
+// Inline text binding toggle (in Propriétés tab)
+.vf-se-text-binding-active {
+  display: flex; flex-direction: column; gap: 5px;
+}
+.vf-se-text-binding-unlink {
+  display: inline-flex; align-items: center; gap: 4px;
+  border: none; background: none; color: #9ca3af; font-size: 11px;
+  cursor: pointer; padding: 0;
+  &:hover { color: #ef4444; }
+}
+.vf-se-text-binding-link {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 4px;
+  border: 1px dashed #d1d5db; background: none; border-radius: 5px;
+  color: #9ca3af; font-size: 11px; cursor: pointer; padding: 4px 8px;
+  transition: all 0.15s; align-self: flex-start;
+  &:hover { color: #6366f1; border-color: #6366f1; }
+}
+
+.vf-se-binding-hint {
+  font-size: 11px; color: #9ca3af; line-height: 1.6; margin: 0 0 8px;
+  code { background: #f3f4f6; padding: 1px 4px; border-radius: 3px; font-family: monospace; font-size: 10px; }
+}
+.vf-se-binding-badge {
+  margin-left: auto; font-size: 10px; font-weight: 600; padding: 1px 6px;
+  background: rgba(99,102,241,0.12); color: #6366f1; border-radius: 10px;
+}
+.vf-se-binding-row { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.vf-se-binding-label { font-size: 11px; color: #6b7280; flex-shrink: 0; min-width: 54px; }
+.vf-se-binding-input {
+  flex: 1; min-width: 0; padding: 5px 8px;
+  background: #fff; border: 1px solid #e5e7eb; border-radius: 5px;
+  font-size: 11.5px; color: #111827; outline: none; box-sizing: border-box;
+  &:focus { border-color: #6366f1; }
+  &--mono { font-family: 'JetBrains Mono', 'Menlo', monospace; }
+}
+.vf-se-binding-prop-row { display: flex; align-items: center; gap: 4px; margin-bottom: 6px; }
+.vf-se-binding-arrow { font-size: 11px; color: #9ca3af; flex-shrink: 0; }
+.vf-se-binding-del { display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border: none; background: transparent; color: #9ca3af; cursor: pointer; border-radius: 4px; flex-shrink: 0; &:hover { background: #fee2e2; color: #ef4444; } }
+.vf-se-binding-clear { display: flex; align-items: center; gap: 4px; border: none; background: none; color: #9ca3af; font-size: 11px; cursor: pointer; padding: 0; &:hover { color: #ef4444; } }
+.vf-se-binding-add { display: flex; align-items: center; gap: 5px; border: 1px dashed #d1d5db; background: none; border-radius: 5px; color: #9ca3af; font-size: 11px; cursor: pointer; width: 100%; padding: 5px 8px; transition: all 0.15s; &:hover { color: #6366f1; border-color: #6366f1; } }
+
 .vf-se-attrs-info { font-size: 11.5px; color: #9ca3af; line-height: 1.6; padding: 8px 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e5e7eb; }
 
 .vf-se-attr-row { display: flex; align-items: center; gap: 6px; }

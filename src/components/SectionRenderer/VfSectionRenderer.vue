@@ -110,6 +110,7 @@
           :prop-overrides-map="section.propOverrides"
           :attr-overrides-map="section.attrOverrides"
           :style-overrides-map="section.styleOverrides"
+          :data-context="dataContext"
           @select="$emit('select-block', $event)"
           @update-text="$emit('update-text', $event)"
           @update-prop="$emit('update-prop', $event)"
@@ -136,11 +137,13 @@ interface Props {
   isFirst: boolean
   isLast: boolean
   previewMode?: boolean
+  dataContext?: Record<string, unknown>
 }
 
 const props = withDefaults(defineProps<Props>(), {
   selectedBlockId: null,
   previewMode: false,
+  dataContext: () => ({}),
 })
 
 const emit = defineEmits<{

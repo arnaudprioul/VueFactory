@@ -21,5 +21,15 @@ export interface IBlockDefinition {
     locked?: boolean
     /** If true, children can be added/removed by the user */
     allowChildren?: boolean
+    // ─── Data binding ───────────────────────────────────────────────────
+    /** JS expression evaluated against dataContext — block hidden when false.
+     *  Example: "products.length > 0" or "user.isLoggedIn" */
+    condition?: string
+    /** Dot-path or {{var}} template to bind block text from data.
+     *  Example: "user.name" or "Hello {{userName}}" */
+    textBinding?: string
+    /** Map of prop name → dot-path in dataContext.
+     *  Example: { src: "product.imageUrl", alt: "product.name" } */
+    propBindings?: Record<string, string>
   }
 }

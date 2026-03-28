@@ -1,4 +1,5 @@
 export * from './CssBox'
+export * from './DataPanel'
 export * from './EditWrapper'
 export * from './PageBuilder'
 export * from './SectionPicker'
